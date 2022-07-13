@@ -6,12 +6,13 @@ let package = Package(
     name: "Utility",
     platforms: [
         .iOS(.v13),
-        .macOS(.v10_12)
+        .macOS(.v10_12),
     ],
     products: [
         .library(
             name: "Utility",
-            targets: ["Utility"]),
+            targets: ["Utility"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0"),
@@ -19,9 +20,11 @@ let package = Package(
     targets: [
         .target(
             name: "Utility",
-            dependencies: []),
+            dependencies: []
+        ),
         .testTarget(
             name: "UtilityTests",
-            dependencies: ["Utility"]),
+            dependencies: ["Utility"]
+        ),
     ]
 )

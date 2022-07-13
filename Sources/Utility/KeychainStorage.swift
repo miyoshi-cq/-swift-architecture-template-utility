@@ -14,10 +14,10 @@ public class KeychainStorage<T: LosslessStringConvertible> {
             return T(result)
         }
         set {
-            guard let new = newValue else { Keychain().remove(self.key)
+            guard let new = newValue else { Keychain().remove(key)
                 return
             }
-            Keychain().set(String(new), key: self.key)
+            Keychain().set(String(new), key: key)
         }
     }
 }
@@ -80,7 +80,7 @@ private struct Keychain {
         var attributes: [String: Any] = [:]
 
         if let key = key {
-            attributes = self.query(key: key)
+            attributes = query(key: key)
         }
 
         attributes[String(kSecValueData)] = value

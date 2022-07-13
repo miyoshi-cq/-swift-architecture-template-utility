@@ -15,18 +15,18 @@ public final class Analytics {
     var provider: AnalyticsProvider?
 
     public func sendEvent(title: String = #function) {
-        self.provider?.sendEvent(title: title)
+        provider?.sendEvent(title: title)
     }
 
     public func sendNonFatalError(error: Error) {
-        self.provider?.sendNonFatalError(error: error)
+        provider?.sendNonFatalError(error: error)
     }
 
     public func setUserID(userId: String?) {
-        self.provider?.setUserID(userId: userId)
+        provider?.setUserID(userId: userId)
     }
 
     public func log(message: String) {
-        self.provider?.log(message: message)
+        provider?.log(message: message)
     }
 }
