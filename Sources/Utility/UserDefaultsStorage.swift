@@ -10,10 +10,10 @@ public class UserDefaultsStorage<T: LosslessStringConvertible> {
 
     public var wrappedValue: T? {
         get {
-            UserDefaults.standard.object(forKey: self.key) as? T
+            UserDefaults.standard.object(forKey: key) as? T
         }
         set {
-            UserDefaults.standard.set(newValue, forKey: self.key)
+            UserDefaults.standard.set(newValue, forKey: key)
         }
     }
 }

@@ -1,7 +1,7 @@
 import Foundation
 import os.log
 
-public struct Logger {
+public enum Logger {
     private static var osLog = OSLog(
         subsystem: "com.caraquri.swift-architecture-template",
         category: "Default"
@@ -13,9 +13,9 @@ public struct Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        self.doLog(
+        doLog(
             message: message,
-            osLog: self.osLog,
+            osLog: osLog,
             logType: .info,
             file: file,
             function: function,
@@ -29,9 +29,9 @@ public struct Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        self.doLog(
+        doLog(
             message: message,
-            osLog: self.osLog,
+            osLog: osLog,
             logType: .debug,
             file: file,
             function: function,
@@ -45,9 +45,9 @@ public struct Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        self.doLog(
+        doLog(
             message: message,
-            osLog: self.osLog,
+            osLog: osLog,
             logType: .error,
             file: file,
             function: function,
@@ -61,9 +61,9 @@ public struct Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        self.doLog(
+        doLog(
             message: message,
-            osLog: self.osLog,
+            osLog: osLog,
             logType: .fault,
             file: file,
             function: function,
@@ -80,16 +80,16 @@ public struct Logger {
         line: Int
     ) {
         #if !RELEASE
-        os_log(
-            "❗️[%@] %@ %@ L:%d %@",
-            log: osLog,
-            type: logType,
-            String(describing: logType),
-            file.split(separator: "/").last! as CVarArg,
-            function,
-            line,
-            message
-        )
+            os_log(
+                "❗️[%@] %@ %@ L:%d %@",
+                log: osLog,
+                type: logType,
+                String(describing: logType),
+                file.split(separator: "/").last! as CVarArg,
+                function,
+                line,
+                message
+            )
         #endif
     }
 }

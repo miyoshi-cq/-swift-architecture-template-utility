@@ -120,7 +120,7 @@ extension ISO8601DateFormatter {
     convenience init(_ formatOptions: Options) {
         self.init()
         self.formatOptions = formatOptions
-        self.timeZone = .japan
+        timeZone = .japan
     }
 }
 
