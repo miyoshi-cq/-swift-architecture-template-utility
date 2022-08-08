@@ -51,6 +51,11 @@ public extension Date {
         return formatter.string(from: self)
     }
 
+    var dateHyphen: String {
+        formatter.dateFormat = DateStringType.yearMonthDayHyphen.rawValue
+        return formatter.string(from: self)
+    }
+
     var dateYYYYMMdd: String {
         formatter.dateFormat = DateStringType.yyyyMMdd.rawValue
         return formatter.string(from: self)

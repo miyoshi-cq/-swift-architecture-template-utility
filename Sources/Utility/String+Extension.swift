@@ -6,6 +6,7 @@ public enum DateStringType: String {
     case YYYY年M月
     case M月d日HHii = "M月d日 HH:ii"
     case yearMonthDayJp = "YYYY年M月d日"
+    case yearMonthDayHyphen = "YYYY-MM-dd"
     case yearMonthDayDateJp = "YYYY年M月d日(EEE)"
     case startAt = "ah:mm〜"
     case startAtYearMonthDateJp24 = "YYYY年M月d日 H:mm〜"
