@@ -16,6 +16,16 @@ public extension Date {
         return calender
     }
 
+    func format(_ format: String) -> String {
+        formatter.dateFormat = format
+        return formatter.string(from: self)
+    }
+
+    func format(_ format: String) -> Int {
+        formatter.dateFormat = format
+        return Int(formatter.string(from: self))!
+    }
+
     var year: Int {
         formatter.dateFormat = "YYYY"
         return Int(formatter.string(from: self))!
