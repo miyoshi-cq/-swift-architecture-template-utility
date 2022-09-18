@@ -3,7 +3,7 @@ import Foundation
 
 private var instances: [String: AnyObject] = [:]
 
-public protocol Usecase {
+protocol Usecase {
     associatedtype Repository: Initializable
     associatedtype Mapper: Initializable
     associatedtype Input: Initializable
@@ -28,7 +28,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
     public var lastId: String?
     public var xCursol: String?
 
-    public static var shared: UsecaseImpl<R, M, I, E> {
+    public static var shared: some UsecaseImpl {
         let type = String(describing: R.self)
             + String(describing: M.self)
             + String(describing: I.self)
