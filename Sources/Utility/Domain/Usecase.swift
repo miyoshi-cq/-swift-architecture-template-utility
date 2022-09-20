@@ -85,7 +85,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
             promise(.failure(.unknown))
 
         case .invalidRequest:
-            promise(.failure(.invalid(error.localizedDescription)))
+            promise(.failure(.invalid(title: "", message: error.localizedDescription)))
 
         case .offline:
             promise(.failure(.offline))
