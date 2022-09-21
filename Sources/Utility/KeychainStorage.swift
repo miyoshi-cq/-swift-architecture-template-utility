@@ -24,7 +24,7 @@ public class KeychainStorage<T: LosslessStringConvertible> {
 
 private struct Keychain {
     func get(_ key: String) -> String? {
-        var query = self.query(key: key)
+        var query = query(key: key)
 
         query[String(kSecMatchLimit)] = kSecMatchLimitOne
         query[String(kSecReturnData)] = kCFBooleanTrue
@@ -42,7 +42,7 @@ private struct Keychain {
     }
 
     func remove(_ key: String) {
-        let query = self.query(key: key)
+        let query = query(key: key)
         SecItemDelete(query as CFDictionary)
     }
 
@@ -51,16 +51,16 @@ private struct Keychain {
             return
         }
 
-        let query = self.query(key: key)
+        let query = query(key: key)
 
         let status = SecItemCopyMatching(query as CFDictionary, nil)
         switch status {
         case errSecSuccess, errSecInteractionNotAllowed:
             let query = self.query(key: key)
-            let attributes = self.attributes(key: nil, value: data)
+            let attributes = attributes(key: nil, value: data)
             SecItemUpdate(query as CFDictionary, attributes as CFDictionary)
         case errSecItemNotFound:
-            let attributes = self.attributes(key: key, value: data)
+            let attributes = attributes(key: key, value: data)
             SecItemAdd(attributes as CFDictionary, nil)
         default:
             return
