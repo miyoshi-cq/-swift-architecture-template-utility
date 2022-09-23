@@ -1,6 +1,10 @@
 import Combine
 import Foundation
 
+public enum NotificationName {
+    public static let clearOutputStorage: Notification.Name = .init(rawValue: "outputStorage.clear")
+}
+
 private var instances: [String: AnyObject] = [:]
 
 protocol Usecase {
@@ -60,6 +64,14 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         self.analytics = analytics
         self.useTestData = useTestData
         inputStorage = input
+
+        NotificationCenter.default.addObserver(
+            forName: NotificationName.clearOutputStorage,
+            object: nil,
+            queue: .current
+        ) { _ in
+            self.outputStorage = []
+        }
     }
 
     public func toPublisher<T, E: Error>(
