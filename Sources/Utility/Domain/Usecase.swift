@@ -90,26 +90,20 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
             .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
 
         switch error {
-        case .unknown:
-            promise(.failure(.unknown))
-
-        case .missingTestJsonDataPath:
-            promise(.failure(.unknown))
-
-        case .invalidRequest:
-            promise(.failure(.invalid(title: "", message: error.localizedDescription)))
+        case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
+            promise(.failure(.none))
 
         case .offline:
-            promise(.failure(.offline))
+            promise(.failure(.notice(title: "", message: error.localizedDescription)))
 
-        case let .decodeError(string):
-            promise(.failure(.normal(string)))
+        case let .responseError(statusCode):
 
-        case .responseError:
-            promise(.failure(.normal(error.localizedDescription)))
-
-        case .authError:
-            promise(.failure(.auth(error.localizedDescription)))
+            switch statusCode {
+            case 401, 403:
+                promise(.failure(.redirect(title: "", message: error.localizedDescription)))
+            default:
+                promise(.failure(.notice(title: "", message: error.localizedDescription)))
+            }
         }
     }
 }

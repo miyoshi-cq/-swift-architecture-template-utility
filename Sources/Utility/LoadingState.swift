@@ -19,27 +19,18 @@ public enum LoadingState<T: Equatable, E: Error & Equatable>: Equatable {
 }
 
 public enum AppError: Error, Equatable, LocalizedError {
-    case normal(String),
-         auth(String),
-         unknown,
-         empty,
-         offline,
-         invalid(title: String, message: String)
+    case notice(title: String, message: String),
+         redirect(title: String, message: String),
+         none
 
     public var errorDescription: String? {
         switch self {
-        case let .normal(string):
-            return string
-        case let .auth(string):
-            return string
-        case .unknown:
-            return "エラーが発生しました"
-        case .empty:
-            return "エラーが発生しました"
-        case .offline:
-            return "オフラインのため、通信に失敗しました。\n通信環境をご確認ください。"
-        case let .invalid(_, message):
+        case let .notice(_, message):
             return message
+        case let .redirect(_, message):
+            return message
+        case .none:
+            return nil
         }
     }
 }
