@@ -5,9 +5,8 @@ public enum APIError: LocalizedError, Equatable {
     case missingTestJsonDataPath
     case invalidRequest
     case offline
-    case authError
     case decodeError(String)
-    case responseError
+    case responseError(statusCode: Int)
 
     public var errorDescription: String? {
         switch self {
@@ -23,8 +22,6 @@ public enum APIError: LocalizedError, Equatable {
             return "decode error occured, \(error)"
         case .responseError:
             return "response error occured"
-        case .authError:
-            return "auth error occured"
         }
     }
 }

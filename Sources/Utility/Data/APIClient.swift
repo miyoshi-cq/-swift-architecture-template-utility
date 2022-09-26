@@ -59,7 +59,7 @@ public struct APIClient: Client {
             switch statusCode {
             case HTTPStatusCode.successRange:
                 guard let data = data else {
-                    completion(.failure(.responseError), response as? HTTPURLResponse)
+                    completion(.failure(.unknown), response as? HTTPURLResponse)
                     return
                 }
 
@@ -70,23 +70,10 @@ public struct APIClient: Client {
                 )
 
             default:
-
-                if statusCode == HTTPStatusCode.badRequest {
-                    completion(.failure(.invalidRequest), response as? HTTPURLResponse)
-                    return
-                }
-
-                if statusCode == HTTPStatusCode.unauthorized {
-                    completion(.failure(.authError), response as? HTTPURLResponse)
-                    return
-                }
-
-                if statusCode == HTTPStatusCode.notFound {
-                    completion(.failure(.responseError), response as? HTTPURLResponse)
-                    return
-                }
-
-                completion(.failure(.unknown), response as? HTTPURLResponse)
+                completion(
+                    .failure(.responseError(statusCode: statusCode)),
+                    response as? HTTPURLResponse
+                )
             }
         }
 
