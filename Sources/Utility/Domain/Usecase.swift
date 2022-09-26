@@ -100,7 +100,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
 
             switch statusCode {
             case 401, 403:
-                promise(.failure(.redirect(title: "", message: error.localizedDescription)))
+                promise(.failure(.action(title: "", message: error.localizedDescription)))
             default:
                 promise(.failure(.notice(title: "", message: error.localizedDescription)))
             }
