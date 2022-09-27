@@ -12,6 +12,16 @@ public struct AnalyticsEvent {
     public let category: String
     public let action: String
     public let label: String
+
+    public init(
+        category: String,
+        action: String,
+        label: String
+    ) {
+        self.category = category
+        self.action = action
+        self.label = label
+    }
 }
 
 public final class AnalyticsService {
