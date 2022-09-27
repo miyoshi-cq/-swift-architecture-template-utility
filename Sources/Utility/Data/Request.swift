@@ -52,6 +52,7 @@ public protocol Request {
 
     #if DEBUG
         var testDataPath: URL? { get }
+        var fakeAPIErrorStatusCode: Int? { get }
     #endif
 
     init(
@@ -93,6 +94,8 @@ public extension Request {
     var successHandler: (Response) -> Void {{ _ in }}
 
     var failureHandler: (Error) -> Void {{ _ in }}
+
+    var fakeAPIErrorStatusCode: Int? { nil }
 }
 
 private extension Encodable {
