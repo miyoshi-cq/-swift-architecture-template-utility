@@ -1,21 +1,32 @@
 import Foundation
 
 public protocol AnalyticsProvider {
-    func sendEvent(title: String)
+    func sendEvent(event: AnalyticsEvent)
+    func sendScreen(screenName: String)
     func sendNonFatalError(error: Error)
     func setUserID(userId: String?)
     func log(message: String)
 }
 
-public final class Analytics {
+public struct AnalyticsEvent {
+    public let category: String
+    public let action: String
+    public let label: String
+}
+
+public final class AnalyticsService {
     private init() {}
 
-    public static var shared: Analytics = .init()
+    public static var shared: AnalyticsService = .init()
 
     var provider: AnalyticsProvider?
 
-    public func sendEvent(title: String = #function) {
-        provider?.sendEvent(title: title)
+    public func sendEvent(_ event: AnalyticsEvent) {
+        provider?.sendEvent(event: event)
+    }
+
+    public func sendScreen(screenName: String) {
+        provider?.sendScreen(screenName: screenName)
     }
 
     public func sendNonFatalError(error: Error) {

@@ -15,7 +15,7 @@ protocol Usecase {
 
     var repository: Repository { get }
     var mapper: Mapper { get }
-    var analytics: Analytics { get }
+    var analytics: AnalyticsService { get }
     var inputStorage: Input { get }
     var outputStorage: [Output] { get }
     var lastId: String? { get }
@@ -25,7 +25,7 @@ protocol Usecase {
 public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E: Entity>: Usecase {
     public var repository: R
     public var mapper: M
-    public var analytics: Analytics = .shared
+    public var analytics: AnalyticsService = .shared
     public var useTestData: Bool
     public var inputStorage: I
     public var outputStorage: [E] = []
@@ -56,7 +56,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         repository: R,
         mapper: M,
         input: I,
-        analytics: Analytics = .shared,
+        analytics: AnalyticsService = .shared,
         useTestData: Bool
     ) {
         self.repository = repository
