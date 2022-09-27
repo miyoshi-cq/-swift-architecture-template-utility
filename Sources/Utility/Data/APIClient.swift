@@ -49,27 +49,9 @@ public struct APIClient: Client {
 
         let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
 
-            // TODO: 暫定でステータスコードによる判定処理を追加。使用しない場合削除
-            if let statusCode = (response as? HTTPURLResponse)?.statusCode {
-                switch statusCode {
-                case HTTPStatusCode.noContent: // 204
-                    Logger.debug(message: "status code is noContent(\(statusCode))")
-                case HTTPStatusCode.successRange: // 200...299
-                    Logger.debug(message: "status code is success(\(statusCode))")
-                case HTTPStatusCode.badRequest: // 400
-                    Logger.debug(message: "status code is bad request(\(statusCode))")
-                case HTTPStatusCode.unauthorized: // 401
-                    Logger.debug(message: "status code is unauthorized(\(statusCode))")
-                case HTTPStatusCode.notFound: // 404
-                    Logger.debug(message: "status code is notFound(\(statusCode))")
-                case HTTPStatusCode.unprocessableEntity: // 422
-                    Logger.debug(message: "status code is unprocessableEntity(\(statusCode))")
-                default: // 上記以外
-                    Logger.debug(message: "status code: \(statusCode)")
-                }
-            } else {
-                Logger.debug(message: "status code is nil")
-            }
+            #if DEBUG
+                debugPrint(response!)
+            #endif
 
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
                 completion(.failure(.unknown), response as? HTTPURLResponse)
