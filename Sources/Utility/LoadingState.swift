@@ -17,20 +17,3 @@ public enum LoadingState<T: Equatable, E: Error & Equatable>: Equatable {
         }
     }
 }
-
-public enum AppError: Error, Equatable, LocalizedError {
-    case notice(title: String, message: String),
-         action(title: String, message: String),
-         none
-
-    public var errorDescription: String? {
-        switch self {
-        case let .notice(_, message):
-            return message
-        case let .action(_, message):
-            return message
-        case .none:
-            return nil
-        }
-    }
-}

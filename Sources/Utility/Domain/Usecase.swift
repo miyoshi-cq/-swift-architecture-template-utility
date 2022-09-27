@@ -94,15 +94,15 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
             promise(.failure(.none))
 
         case .offline:
-            promise(.failure(.notice(title: "", message: error.localizedDescription)))
+            promise(.failure(.normal(title: "", message: error.localizedDescription)))
 
         case let .responseError(statusCode):
 
             switch statusCode {
             case 401, 403:
-                promise(.failure(.action(title: "", message: error.localizedDescription)))
+                promise(.failure(.auth(title: "", message: error.localizedDescription)))
             default:
-                promise(.failure(.notice(title: "", message: error.localizedDescription)))
+                promise(.failure(.normal(title: "", message: error.localizedDescription)))
             }
         }
     }
