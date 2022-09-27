@@ -2,7 +2,7 @@ import Combine
 import Foundation
 
 public enum NotificationName {
-    public static let clearOutputStorage: Notification.Name = .init(rawValue: "outputStorage.clear")
+    public static let clearUsecase: Notification.Name = .init(rawValue: "usecase.clear")
 }
 
 private var instances: [String: AnyObject] = [:]
@@ -66,11 +66,14 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         inputStorage = input
 
         NotificationCenter.default.addObserver(
-            forName: NotificationName.clearOutputStorage,
+            forName: NotificationName.clearUsecase,
             object: nil,
             queue: .current
         ) { _ in
+            self.inputStorage = .init()
             self.outputStorage = []
+            self.lastId = nil
+            self.xCursol = nil
         }
     }
 
@@ -102,7 +105,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
             case 401, 403:
 
                 NotificationCenter.default.post(
-                    name: NotificationName.clearOutputStorage,
+                    name: NotificationName.clearUsecase,
                     object: nil
                 )
 
