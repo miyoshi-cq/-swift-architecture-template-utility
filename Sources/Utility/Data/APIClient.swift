@@ -1,8 +1,6 @@
 import Foundation
 
 public struct APIClient: Client {
-    static var fakeAPIErrorStatusCode: Int?
-
     public init() {}
 
     public func request<T: Request>(
@@ -20,7 +18,7 @@ public struct APIClient: Client {
 
         #if DEBUG
             let configuration = URLSessionConfiguration.default
-            if let fakeAPIErrorStatusCode = Self.fakeAPIErrorStatusCode {
+            if let fakeAPIErrorStatusCode = item.fakeAPIErrorStatusCode {
                 configuration.protocolClasses = [MockURLProtocol.self]
                 MockURLProtocol.requestHandler = { request in
                     let mockJSONData = "{\"messages\":[\"認証トークンが確認できませんでした。\"]}".data(using: .utf8)!

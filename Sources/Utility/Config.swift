@@ -2,10 +2,8 @@ import Foundation
 
 public enum UtilityConfig {
     public static func setup(
-        analytics: AnalyticsProvider,
-        fakeAPIErrorStatusCode: Int?
+        analytics: AnalyticsProvider
     ) {
         Analytics.shared.provider = analytics
-        APIClient.fakeAPIErrorStatusCode = fakeAPIErrorStatusCode
     }
 }
