@@ -100,6 +100,12 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
 
             switch statusCode {
             case 401, 403:
+
+                NotificationCenter.default.post(
+                    name: NotificationName.clearOutputStorage,
+                    object: nil
+                )
+
                 promise(.failure(.auth(title: "", message: error.localizedDescription)))
             default:
                 promise(.failure(.normal(title: "", message: error.localizedDescription)))
