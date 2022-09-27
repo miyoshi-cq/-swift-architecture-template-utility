@@ -1,6 +1,8 @@
 import Foundation
 
 public struct APIClient: Client {
+    static var fakeAPIErrorStatusCode: Int?
+
     public init() {}
 
     public func request<T: Request>(
@@ -16,6 +18,26 @@ public struct APIClient: Client {
             }
         #endif
 
+        #if DEBUG
+            let configuration = URLSessionConfiguration.default
+            if let fakeAPIErrorStatusCode = Self.fakeAPIErrorStatusCode {
+                configuration.protocolClasses = [MockURLProtocol.self]
+                MockURLProtocol.requestHandler = { request in
+                    let mockJSONData = "{\"messages\":[\"認証トークンが確認できませんでした。\"]}".data(using: .utf8)!
+                    let response = HTTPURLResponse(
+                        url: request.url!,
+                        statusCode: fakeAPIErrorStatusCode,
+                        httpVersion: "HTTP/1.1",
+                        headerFields: nil
+                    )
+                    return (response, mockJSONData)
+                }
+            }
+            let urlSession = URLSession(configuration: configuration)
+        #else
+            let urlSession = URLSession.shared
+        #endif
+
         guard let urlRequest = createURLRequest(item) else {
             completion(.failure(.invalidRequest), nil)
             return
@@ -27,7 +49,7 @@ public struct APIClient: Client {
             return
         }
 
-        let task = URLSession.shared.dataTask(with: urlRequest) { data, response, _ in
+        let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
 
             // TODO: 暫定でステータスコードによる判定処理を追加。使用しない場合削除
             if let statusCode = (response as? HTTPURLResponse)?.statusCode {
