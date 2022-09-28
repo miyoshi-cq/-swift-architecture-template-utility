@@ -49,6 +49,7 @@ public protocol Request {
     var localDataInterceptor: (Parameters) -> Response? { get }
     var successHandler: (Response) -> Void { get }
     var failureHandler: (Error) -> Void { get }
+    var errorMessage: ((_ statusCode: Int) -> String?)? { get }
 
     #if DEBUG
         var testDataPath: URL? { get }
@@ -96,6 +97,8 @@ public extension Request {
     var failureHandler: (Error) -> Void {{ _ in }}
 
     var fakeAPIErrorStatusCode: Int? { nil }
+
+    var errorMessage: ((Int) -> String?)? { nil }
 }
 
 private extension Encodable {

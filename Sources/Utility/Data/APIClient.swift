@@ -73,7 +73,12 @@ public struct APIClient: Client {
 
             default:
                 completion(
-                    .failure(.responseError(statusCode: statusCode)),
+                    .failure(
+                        .responseError(
+                            statusCode: statusCode,
+                            errorMessage: item.errorMessage?(statusCode)
+                        )
+                    ),
                     response as? HTTPURLResponse
                 )
             }
