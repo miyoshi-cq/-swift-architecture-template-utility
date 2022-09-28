@@ -6,5 +6,5 @@ public enum APIError: Equatable, Error {
     case invalidRequest
     case offline
     case decodeError(String)
-    case responseError(statusCode: Int)
+    case responseError(statusCode: Int, errorMessage: String?)
 }

@@ -99,7 +99,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         case .offline:
             promise(.failure(.normal(title: "", message: error.localizedDescription)))
 
-        case let .responseError(statusCode):
+        case let .responseError(statusCode, _):
 
             switch statusCode {
             case 401, 403:
