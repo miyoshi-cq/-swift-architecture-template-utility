@@ -55,16 +55,27 @@ public struct APIClient: Client {
         let task = urlSession.dataTask(with: urlRequest) { data, response, error in
 
             #if DEBUG
-            debugPrint(response!)
+            if let response = response {
+                debugPrint(response)
+            }
             #endif
 
             if
                 let err = error as NSError?,
-                err.domain == NSURLErrorDomain,
-                err.code == NSURLErrorTimedOut
+                err.domain == NSURLErrorDomain
             {
-                completion(.failure(.timeout), response as? HTTPURLResponse)
-                return
+                switch err.code {
+                case NSURLErrorNotConnectedToInternet:
+                    completion(.failure(.offline), response as? HTTPURLResponse)
+                    return
+
+                case NSURLErrorTimedOut:
+                    completion(.failure(.timeout), response as? HTTPURLResponse)
+                    return
+
+                default:
+                    break
+                }
             }
 
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
