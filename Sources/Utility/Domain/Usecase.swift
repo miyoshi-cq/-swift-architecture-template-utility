@@ -96,7 +96,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
             promise(.failure(.none))
 
-        case .offline:
+        case .offline, .timeout:
             promise(.failure(.normal(title: "", message: error.localizedDescription)))
 
         case let .responseError(statusCode, _):

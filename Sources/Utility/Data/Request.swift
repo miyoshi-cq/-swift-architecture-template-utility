@@ -50,6 +50,7 @@ public protocol Request {
     var successHandler: (Response) -> Void { get }
     var failureHandler: (Error) -> Void { get }
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
+    var timeoutInterval: TimeInterval { get }
 
     #if DEBUG
     var testDataPath: URL? { get }
@@ -99,6 +100,8 @@ public extension Request {
     var fakeAPIErrorStatusCode: Int? { nil }
 
     var errorMessage: ((Int) -> String?)? { nil }
+
+    var timeoutInterval: TimeInterval { 20 }
 }
 
 private extension Encodable {
