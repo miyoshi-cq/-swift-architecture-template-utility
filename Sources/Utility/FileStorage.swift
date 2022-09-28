@@ -6,16 +6,16 @@ public class FileStorage<T: Codable> {
     private let file: String
 
     public init(fileName: String) {
-        file = fileName
-        value = LocalStorageManager.getObjectFromFile(filename: fileName)
+        self.file = fileName
+        self.value = LocalStorageManager.getObjectFromFile(filename: fileName)
     }
 
     public var wrappedValue: T? {
-        get { value }
+        get { self.value }
         set {
-            value = newValue
+            self.value = newValue
 
-            let fileName = file
+            let fileName = self.file
 
             if let data = newValue {
                 LocalStorageManager.writeObjectToFile(filename: fileName, jsonEncodable: data)
@@ -55,7 +55,7 @@ private enum LocalStorageManager {
         let manager = FileManager.default
         guard
             let docUrl = manager.urls(for: .applicationSupportDirectory, in: .userDomainMask)
-            .first
+                .first
         else {
             return
         }
@@ -139,7 +139,7 @@ private extension LocalStorageManager {
         let userMask = FileManager.SearchPathDomainMask.userDomainMask
         guard
             let appSupportDirURL: URL = FileManager.default.urls(for: appSupportDir, in: userMask)
-            .first
+                .first
         else {
             throw PathSearchError.pathNotFound
         }

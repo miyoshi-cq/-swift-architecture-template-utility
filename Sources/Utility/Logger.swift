@@ -13,9 +13,9 @@ public enum Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        doLog(
+        self.doLog(
             message: message,
-            osLog: osLog,
+            osLog: self.osLog,
             logType: .info,
             file: file,
             function: function,
@@ -29,9 +29,9 @@ public enum Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        doLog(
+        self.doLog(
             message: message,
-            osLog: osLog,
+            osLog: self.osLog,
             logType: .debug,
             file: file,
             function: function,
@@ -45,9 +45,9 @@ public enum Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        doLog(
+        self.doLog(
             message: message,
-            osLog: osLog,
+            osLog: self.osLog,
             logType: .error,
             file: file,
             function: function,
@@ -61,9 +61,9 @@ public enum Logger {
         function: String = #function,
         line: Int = #line
     ) {
-        doLog(
+        self.doLog(
             message: message,
-            osLog: osLog,
+            osLog: self.osLog,
             logType: .fault,
             file: file,
             function: function,
@@ -80,16 +80,16 @@ public enum Logger {
         line: Int
     ) {
         #if !RELEASE
-            os_log(
-                "❗️[%@] %@ %@ L:%d %@",
-                log: osLog,
-                type: logType,
-                String(describing: logType),
-                file.split(separator: "/").last! as CVarArg,
-                function,
-                line,
-                message
-            )
+        os_log(
+            "❗️[%@] %@ %@ L:%d %@",
+            log: osLog,
+            type: logType,
+            String(describing: logType),
+            file.split(separator: "/").last! as CVarArg,
+            function,
+            line,
+            message
+        )
         #endif
     }
 }

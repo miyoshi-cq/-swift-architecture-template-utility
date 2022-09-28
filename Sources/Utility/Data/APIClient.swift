@@ -9,31 +9,34 @@ public struct APIClient: Client {
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
         #if DEBUG
-            if useTestData {
-                let testDataFetchRequest = TestDataFetchRequest(testDataJsonPath: item.testDataPath)
-                completion(testDataFetchRequest.fetchLocalTestData(responseType: T.Response.self), nil)
-                return
-            }
+        if useTestData {
+            let testDataFetchRequest = TestDataFetchRequest(testDataJsonPath: item.testDataPath)
+            completion(
+                testDataFetchRequest.fetchLocalTestData(responseType: T.Response.self),
+                nil
+            )
+            return
+        }
         #endif
 
         #if DEBUG
-            let configuration = URLSessionConfiguration.default
-            if let fakeAPIErrorStatusCode = item.fakeAPIErrorStatusCode {
-                configuration.protocolClasses = [MockURLProtocol.self]
-                MockURLProtocol.requestHandler = { request in
-                    let mockJSONData = "{\"messages\":[\"認証トークンが確認できませんでした。\"]}".data(using: .utf8)!
-                    let response = HTTPURLResponse(
-                        url: request.url!,
-                        statusCode: fakeAPIErrorStatusCode,
-                        httpVersion: "HTTP/1.1",
-                        headerFields: nil
-                    )
-                    return (response, mockJSONData)
-                }
+        let configuration = URLSessionConfiguration.default
+        if let fakeAPIErrorStatusCode = item.fakeAPIErrorStatusCode {
+            configuration.protocolClasses = [MockURLProtocol.self]
+            MockURLProtocol.requestHandler = { request in
+                let mockJSONData = "{\"messages\":[\"認証トークンが確認できませんでした。\"]}".data(using: .utf8)!
+                let response = HTTPURLResponse(
+                    url: request.url!,
+                    statusCode: fakeAPIErrorStatusCode,
+                    httpVersion: "HTTP/1.1",
+                    headerFields: nil
+                )
+                return (response, mockJSONData)
             }
-            let urlSession = URLSession(configuration: configuration)
+        }
+        let urlSession = URLSession(configuration: configuration)
         #else
-            let urlSession = URLSession.shared
+        let urlSession = URLSession.shared
         #endif
 
         guard let urlRequest = createURLRequest(item) else {
@@ -43,14 +46,14 @@ public struct APIClient: Client {
 
         // TODO: need to consider cache expiration
         if let cache = URLCache.shared.cachedResponse(for: urlRequest), item.wantCache {
-            decode(data: cache.data, responseInfo: nil, completion: completion)
+            self.decode(data: cache.data, responseInfo: nil, completion: completion)
             return
         }
 
         let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
 
             #if DEBUG
-                debugPrint(response!)
+            debugPrint(response!)
             #endif
 
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {

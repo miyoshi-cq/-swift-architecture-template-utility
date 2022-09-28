@@ -32,22 +32,22 @@ public final class AnalyticsService {
     var provider: AnalyticsProvider?
 
     public func sendEvent(_ event: AnalyticsEvent) {
-        provider?.sendEvent(event: event)
+        self.provider?.sendEvent(event: event)
     }
 
     public func sendScreen(screenName: String) {
-        provider?.sendScreen(screenName: screenName)
+        self.provider?.sendScreen(screenName: screenName)
     }
 
     public func sendNonFatalError(error: Error) {
-        provider?.sendNonFatalError(error: error)
+        self.provider?.sendNonFatalError(error: error)
     }
 
     public func setUserID(userId: String?) {
-        provider?.setUserID(userId: userId)
+        self.provider?.setUserID(userId: userId)
     }
 
     public func log(message: String) {
-        provider?.log(message: message)
+        self.provider?.log(message: message)
     }
 }
