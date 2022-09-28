@@ -21,7 +21,7 @@ public struct TestDataFetchRequest {
             return Result.success(result)
         } catch {
             #if DEBUG
-                debugPrint(error)
+            debugPrint(error)
             #endif
             return Result.failure(.decodeError(error.localizedDescription))
         }

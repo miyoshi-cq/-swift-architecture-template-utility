@@ -43,7 +43,7 @@ public struct Repository<T: Request, C: Client>: Repo {
             pathComponent: pathComponent
         )
 
-        client.request(item: item, useTestData: useTestData) { result, responseInfo in
+        self.client.request(item: item, useTestData: useTestData) { result, responseInfo in
 
             switch result {
             case let .success(value):
@@ -72,7 +72,7 @@ public extension Repository where T.Parameters == EmptyParameters {
         pathComponent: T.PathComponent,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
-        request(
+        self.request(
             useTestData: useTestData,
             parameters: .init(),
             pathComponent: pathComponent,
@@ -95,7 +95,7 @@ public extension Repository where T.PathComponent == EmptyPathComponent {
         parameters: T.Parameters,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
-        request(
+        self.request(
             useTestData: useTestData,
             parameters: parameters,
             pathComponent: .init(),
@@ -119,7 +119,7 @@ public extension Repository where T.PathComponent == EmptyPathComponent,
         useTestData: Bool = false,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
-        request(
+        self.request(
             useTestData: useTestData,
             parameters: .init(),
             pathComponent: .init(),

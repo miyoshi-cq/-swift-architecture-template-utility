@@ -14,16 +14,16 @@ public struct DateValue<Formatter: DateValueCodableStrategy>: Codable, Equatable
 
     public init(wrappedValue: Date) {
         self.wrappedValue = wrappedValue
-        value = Formatter.encode(wrappedValue)
+        self.value = Formatter.encode(wrappedValue)
     }
 
     public init(from decoder: Decoder) throws {
-        value = try Formatter.RawValue(from: decoder)
-        wrappedValue = try Formatter.decode(value)
+        self.value = try Formatter.RawValue(from: decoder)
+        self.wrappedValue = try Formatter.decode(self.value)
     }
 
     public func encode(to encoder: Encoder) throws {
-        try value.encode(to: encoder)
+        try self.value.encode(to: encoder)
     }
 }
 

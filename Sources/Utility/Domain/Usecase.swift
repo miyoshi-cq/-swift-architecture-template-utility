@@ -63,7 +63,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         self.mapper = mapper
         self.analytics = analytics
         self.useTestData = useTestData
-        inputStorage = input
+        self.inputStorage = input
 
         NotificationCenter.default.addObserver(
             forName: NotificationName.clearUsecase,
@@ -89,7 +89,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
     }
 
     public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
-        analytics
+        self.analytics
             .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
 
         switch error {

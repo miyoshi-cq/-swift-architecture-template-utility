@@ -52,8 +52,8 @@ public protocol Request {
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
 
     #if DEBUG
-        var testDataPath: URL? { get }
-        var fakeAPIErrorStatusCode: Int? { get }
+    var testDataPath: URL? { get }
+    var fakeAPIErrorStatusCode: Int? { get }
     #endif
 
     init(
