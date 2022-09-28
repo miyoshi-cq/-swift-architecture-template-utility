@@ -39,10 +39,12 @@ public struct APIClient: Client {
         let urlSession = URLSession.shared
         #endif
 
-        guard let urlRequest = createURLRequest(item) else {
+        guard var urlRequest = createURLRequest(item) else {
             completion(.failure(.invalidRequest), nil)
             return
         }
+
+        urlRequest.timeoutInterval = item.timeoutInterval
 
         // TODO: need to consider cache expiration
         if let cache = URLCache.shared.cachedResponse(for: urlRequest), item.wantCache {
@@ -50,11 +52,20 @@ public struct APIClient: Client {
             return
         }
 
-        let task = urlSession.dataTask(with: urlRequest) { data, response, _ in
+        let task = urlSession.dataTask(with: urlRequest) { data, response, error in
 
             #if DEBUG
             debugPrint(response!)
             #endif
+
+            if
+                let err = error as NSError?,
+                err.domain == NSURLErrorDomain,
+                err.code == NSURLErrorTimedOut
+            {
+                completion(.failure(.timeout), response as? HTTPURLResponse)
+                return
+            }
 
             guard let statusCode = (response as? HTTPURLResponse)?.statusCode else {
                 completion(.failure(.unknown), response as? HTTPURLResponse)
