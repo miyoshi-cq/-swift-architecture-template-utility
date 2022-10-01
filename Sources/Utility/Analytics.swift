@@ -11,7 +11,7 @@ public protocol AnalyticsProvider {
 public protocol AnalyticsEvent {
     var category: String { get }
     var action: String { get }
-    var label: String { get }
+    var label: String? { get }
 }
 
 public final class AnalyticsService {
