@@ -19,25 +19,35 @@ public final class AnalyticsService {
 
     public static var shared: AnalyticsService = .init()
 
-    var provider: AnalyticsProvider?
+    var providers: [AnalyticsProvider] = []
 
     public func sendEvent(_ event: AnalyticsEvent) {
-        self.provider?.sendEvent(event: event)
+        self.providers.forEach { item in
+            item.sendEvent(event: event)
+        }
     }
 
     public func sendScreen(screenName: String) {
-        self.provider?.sendScreen(screenName: screenName)
+        self.providers.forEach { item in
+            item.sendScreen(screenName: screenName)
+        }
     }
 
     public func sendNonFatalError(error: Error) {
-        self.provider?.sendNonFatalError(error: error)
+        self.providers.forEach { item in
+            item.sendNonFatalError(error: error)
+        }
     }
 
     public func setUserID(userId: String?) {
-        self.provider?.setUserID(userId: userId)
+        self.providers.forEach { item in
+            item.setUserID(userId: userId)
+        }
     }
 
     public func log(message: String) {
-        self.provider?.log(message: message)
+        self.providers.forEach { item in
+            item.log(message: message)
+        }
     }
 }
