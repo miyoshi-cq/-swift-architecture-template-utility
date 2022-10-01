@@ -2,8 +2,8 @@ import Foundation
 
 public enum UtilityConfig {
     public static func setup(
-        analytics: AnalyticsProvider
+        analytics: [AnalyticsProvider]
     ) {
-        AnalyticsService.shared.provider = analytics
+        AnalyticsService.shared.providers = analytics
     }
 }
