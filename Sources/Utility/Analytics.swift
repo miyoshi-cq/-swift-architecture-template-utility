@@ -8,20 +8,10 @@ public protocol AnalyticsProvider {
     func log(message: String)
 }
 
-public struct AnalyticsEvent {
-    public let category: String
-    public let action: String
-    public let label: String
-
-    public init(
-        category: String,
-        action: String,
-        label: String
-    ) {
-        self.category = category
-        self.action = action
-        self.label = label
-    }
+public protocol AnalyticsEvent {
+    var category: String { get }
+    var action: String { get }
+    var label: String { get }
 }
 
 public final class AnalyticsService {
