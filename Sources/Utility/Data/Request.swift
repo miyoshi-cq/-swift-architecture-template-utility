@@ -51,6 +51,7 @@ public protocol Request {
     var failureHandler: (Error) -> Void { get }
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
     var timeoutInterval: TimeInterval { get }
+    var fakeAuthError: Bool { get }
 
     #if DEBUG
     var testDataPath: URL? { get }
@@ -102,6 +103,8 @@ public extension Request {
     var errorMessage: ((Int) -> String?)? { nil }
 
     var timeoutInterval: TimeInterval { 20 }
+
+    var fakeAuthError: Bool { false }
 }
 
 private extension Encodable {
