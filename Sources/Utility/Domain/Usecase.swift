@@ -91,6 +91,8 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
     public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
         self.analytics
             .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
+        self.analytics
+            .sendNonFatalError(error: error)
 
         switch error {
         case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
