@@ -2,10 +2,14 @@ import Foundation
 
 public protocol AnalyticsProvider {
     func sendEvent(event: AnalyticsEvent)
-    func sendScreen(screenName: String)
+    func sendScreen(screen: AnalyticsScreen)
     func sendNonFatalError(error: Error)
     func setUserID(userId: String?)
     func log(message: String)
+}
+
+public protocol AnalyticsScreen {
+    var screenName: String { get }
 }
 
 public protocol AnalyticsEvent {
@@ -27,9 +31,9 @@ public final class AnalyticsService {
         }
     }
 
-    public func sendScreen(screenName: String) {
+    public func sendScreen(screen: AnalyticsScreen) {
         self.providers.forEach { item in
-            item.sendScreen(screenName: screenName)
+            item.sendScreen(screen: screen)
         }
     }
 
