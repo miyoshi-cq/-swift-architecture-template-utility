@@ -13,9 +13,13 @@ public protocol AnalyticsScreen {
 }
 
 public protocol AnalyticsEvent {
-    var category: String { get }
-    var action: String { get }
-    var label: String? { get }
+    var paramter1: String { get }
+    var paramter2: [(type: String, value: String?)] { get }
+    var paramter3: Bool { get }
+}
+
+public extension AnalyticsEvent {
+    var paramter3: Bool { false }
 }
 
 public final class AnalyticsService {
