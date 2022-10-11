@@ -57,6 +57,19 @@ public struct APIClient: Client {
             return
         }
 
+        guard item.fakeBadRequestError == false else {
+            completion(
+                .failure(
+                    .responseError(
+                        statusCode: 400,
+                        errorMessage: item.errorMessage?(400)
+                    )
+                ),
+                nil
+            )
+            return
+        }
+
         urlRequest.timeoutInterval = item.timeoutInterval
 
         // TODO: need to consider cache expiration

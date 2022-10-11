@@ -52,6 +52,7 @@ public protocol Request {
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
     var timeoutInterval: TimeInterval { get }
     var fakeAuthError: Bool { get }
+    var fakeBadRequestError: Bool { get }
 
     #if DEBUG
     var testDataPath: URL? { get }
@@ -105,6 +106,8 @@ public extension Request {
     var timeoutInterval: TimeInterval { 20 }
 
     var fakeAuthError: Bool { false }
+
+    var fakeBadRequestError: Bool { false }
 }
 
 private extension Encodable {
