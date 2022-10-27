@@ -30,13 +30,13 @@ public struct DateValue<Formatter: DateValueCodableStrategy>: Codable, Equatable
 public struct ISO8601FullStrategy: DateValueCodableStrategy {
     public static func decode(_ value: String) throws -> Date {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = .withFractionalSeconds
+        formatter.formatOptions.insert(.withFractionalSeconds)
         return formatter.date(from: value)!
     }
 
     public static func encode(_ date: Date) -> String {
         let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = .withFractionalSeconds
+        formatter.formatOptions.insert(.withFractionalSeconds)
         return formatter.string(from: date)
     }
 }
