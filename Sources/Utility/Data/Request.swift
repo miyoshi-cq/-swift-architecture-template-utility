@@ -52,6 +52,7 @@ public protocol Request {
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
     var timeoutInterval: TimeInterval { get }
     var fakeAuthError: Bool { get }
+    var fakeTimeoutError: Bool { get }
     var fakeBadRequestError: Bool { get }
 
     #if DEBUG
@@ -106,6 +107,8 @@ public extension Request {
     var timeoutInterval: TimeInterval { 20 }
 
     var fakeAuthError: Bool { false }
+
+    var fakeTimeoutError: Bool { false }
 
     var fakeBadRequestError: Bool { false }
 }
