@@ -84,6 +84,12 @@ public struct APIClient: Client {
             if let response = response {
                 debugPrint(response)
             }
+
+            if item.fakeTimeoutError {
+                completion(.failure(.timeout), response as? HTTPURLResponse)
+                return
+            }
+
             #endif
 
             if
