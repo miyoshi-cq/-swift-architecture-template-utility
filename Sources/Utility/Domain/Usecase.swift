@@ -83,12 +83,13 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         Deferred {
             Future { [weak self] promise in
                 self?.analytics.log(message: String(describing: self))
+                Logger.debug(message: "\(Self.self.Repository)")
                 closure(promise)
             }
         }.eraseToAnyPublisher()
     }
 
-    public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
+    public func handleError(error: APIError, promise: Future<some Any, AppError>.Promise) {
         self.analytics
             .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
         self.analytics
@@ -134,11 +135,13 @@ public extension UsecaseImpl where R: Repo,
 
                 self?.analytics.log(message: String(describing: self))
 
+                Logger.debug(message: "\(Self.self.Repository)")
+
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
                 { { [weak self] result, info in
 
-                    guard let self = self else { return }
+                    guard let self else { return }
 
                     self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
 
@@ -151,7 +154,7 @@ public extension UsecaseImpl where R: Repo,
                         entities.forEach { entity in
                             let index = self.outputStorage
                                 .firstIndex { element in element == entity }
-                            if let index = index {
+                            if let index {
                                 self.outputStorage.remove(at: index)
                             }
                             self.outputStorage.append(entity)
@@ -183,11 +186,13 @@ public extension UsecaseImpl where R: Repo,
 
                 self?.analytics.log(message: String(describing: self))
 
+                Logger.debug(message: "\(Self.self.Repository)")
+
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
                 { { [weak self] result, info in
 
-                    guard let self = self else { return }
+                    guard let self else { return }
 
                     self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
 
@@ -219,11 +224,13 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
 
                 self?.analytics.log(message: String(describing: self))
 
+                Logger.debug(message: "\(Self.self.Repository)")
+
                 var completion: (Result<EmptyResponse, APIError>, HTTPURLResponse?)
                     -> Void
                 { { [weak self] result, info in
 
-                    guard let self = self else { return }
+                    guard let self else { return }
 
                     self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
 
