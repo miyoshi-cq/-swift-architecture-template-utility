@@ -83,6 +83,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         Deferred {
             Future { [weak self] promise in
                 self?.analytics.log(message: String(describing: self))
+                Logger.debug(message: "\(Self.self.Repository)")
                 closure(promise)
             }
         }.eraseToAnyPublisher()
@@ -133,6 +134,8 @@ public extension UsecaseImpl where R: Repo,
             Future { [weak self] promise in
 
                 self?.analytics.log(message: String(describing: self))
+                
+                Logger.debug(message: "\(Self.self.Repository)")
 
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
@@ -182,6 +185,8 @@ public extension UsecaseImpl where R: Repo,
             Future { [weak self] promise in
 
                 self?.analytics.log(message: String(describing: self))
+                
+                Logger.debug(message: "\(Self.self.Repository)")
 
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
@@ -218,6 +223,8 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
             Future { [weak self] promise in
 
                 self?.analytics.log(message: String(describing: self))
+                
+                Logger.debug(message: "\(Self.self.Repository)")
 
                 var completion: (Result<EmptyResponse, APIError>, HTTPURLResponse?)
                     -> Void
