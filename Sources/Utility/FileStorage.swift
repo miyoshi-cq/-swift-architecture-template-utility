@@ -82,9 +82,9 @@ private enum LocalStorageManager {
         }
     }
 
-    static func writeObjectToFile<T: Encodable>(
+    static func writeObjectToFile(
         filename: String,
-        jsonEncodable: T,
+        jsonEncodable: some Encodable,
         dispatchQueue: DispatchQueue = DispatchQueue(
             label: DispatchQueueLabel.localStorageManager
                 .rawValue

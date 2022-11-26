@@ -81,7 +81,7 @@ public struct APIClient: Client {
         let task = urlSession.dataTask(with: urlRequest) { data, response, error in
 
             #if DEBUG
-            if let response = response {
+            if let response {
                 debugPrint(response)
             }
 
@@ -117,7 +117,7 @@ public struct APIClient: Client {
 
             switch statusCode {
             case HTTPStatusCode.successRange:
-                guard let data = data else {
+                guard let data else {
                     completion(.failure(.unknown), response as? HTTPURLResponse)
                     return
                 }
@@ -162,7 +162,7 @@ public struct APIClient: Client {
         }
     }
 
-    private func createURLRequest<R: Request>(_ requestItem: R) -> URLRequest? {
+    private func createURLRequest(_ requestItem: some Request) -> URLRequest? {
         guard let fullPath = URL(string: requestItem.baseURL + requestItem.path) else { return nil }
 
         var urlComponents = URLComponents()

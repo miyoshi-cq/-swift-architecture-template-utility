@@ -79,7 +79,7 @@ private struct Keychain {
     private func attributes(key: String?, value: Data) -> [String: Any] {
         var attributes: [String: Any] = [:]
 
-        if let key = key {
+        if let key {
             attributes = self.query(key: key)
         }
 
