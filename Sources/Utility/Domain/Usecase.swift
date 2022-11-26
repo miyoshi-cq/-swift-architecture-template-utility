@@ -89,7 +89,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         }.eraseToAnyPublisher()
     }
 
-    public func handleError(error: APIError, promise: Future<some Any, AppError>.Promise) {
+    public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
         self.analytics
             .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
         self.analytics
