@@ -5,6 +5,17 @@ public struct APIClient: Client {
 
     public func request<T: Request>(
         item: T,
+        useTestData: Bool = false
+    ) async throws -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        return try await withCheckedThrowingContinuation { continuation in
+            self.request(item: item, useTestData: useTestData) { result, response in
+                continuation.resume(returning: (result, response))
+            }
+        }
+    }
+
+    public func request<T: Request>(
+        item: T,
         useTestData: Bool = false,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
