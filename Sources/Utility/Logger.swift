@@ -8,7 +8,7 @@ public class LogService {
         function: String = #function
     ) {
         #if DEBUG
-        self.logger.log(level: .default, "❗️[Default] \(function) \(message, privacy: .public)")
+        self.logger.log(level: .default, "❗️[Default] \(function, privacy: .public) \(message, privacy: .public)")
         #endif
     }
 }
