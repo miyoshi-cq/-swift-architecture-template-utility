@@ -5,12 +5,10 @@ public class LogService {
 
     public static func log(
         _ message: String,
-        file: String = #file,
-        function: String = #function,
-        line: Int = #line
+        function: String = #function
     ) {
         #if DEBUG
-        self.logger.log(level: .default, "❗️[Default] \(message) \(file) L:\(line) \(function)")
+        self.logger.log(level: .default, "❗️[Default] \(function) \(message, privacy: .public)")
         #endif
     }
 }
