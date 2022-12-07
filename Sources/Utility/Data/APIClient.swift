@@ -192,7 +192,7 @@ public struct APIClient: Client {
 
         requestItem.headers.forEach { urlRequest.addValue($1, forHTTPHeaderField: $0) }
 
-        Logger.debug(message: urlRequest.curlString)
+        LogService.log(urlRequest.curlString)
 
         return urlRequest
     }
