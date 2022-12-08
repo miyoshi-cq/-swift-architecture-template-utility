@@ -1,7 +1,7 @@
 import os
 
 public class LogService {
-    static var logger: Logger!
+    static var logger: Logger?
 
     public static func log(
         _ message: String,
@@ -9,7 +9,7 @@ public class LogService {
         function: String = #function
     ) {
         #if DEBUG
-        self.logger.log(
+        self.logger?.log(
             level: logType,
             "\(function, privacy: .public) \(message, privacy: .public)"
         )
