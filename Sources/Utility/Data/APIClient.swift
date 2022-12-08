@@ -91,6 +91,10 @@ public struct APIClient: Client {
 
         let task = urlSession.dataTask(with: urlRequest) { data, response, error in
 
+            if let error {
+                AnalyticsService.shared.log(error.localizedDescription, .error)
+            }
+
             #if DEBUG
             if let response {
                 debugPrint(response)

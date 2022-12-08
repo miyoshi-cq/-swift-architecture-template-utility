@@ -1,4 +1,5 @@
 import Foundation
+import os
 
 public protocol AnalyticsProvider {
     func sendEvent(event: AnalyticsEvent)
@@ -55,11 +56,12 @@ public final class AnalyticsService {
 
     public func log(
         _ message: String,
+        _ logType: OSLogType = .default,
         function: String = #function,
         file: String = #file,
         line: Int = #line
     ) {
-        LogService.log(message, function: function, file: file, line: line)
+        LogService.log(message, logType, function: function, file: file, line: line)
 
         self.providers.forEach { item in
             item.log(message: message, function: function, file: file, line: line)
