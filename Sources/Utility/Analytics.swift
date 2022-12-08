@@ -5,7 +5,7 @@ public protocol AnalyticsProvider {
     func sendScreen(screen: AnalyticsScreen)
     func sendNonFatalError(error: Error)
     func setUserID(userId: String?)
-    func log(message: String, function: String)
+    func log(message: String, function: String, file: String, line: Int)
 }
 
 public protocol AnalyticsScreen {
@@ -53,11 +53,16 @@ public final class AnalyticsService {
         }
     }
 
-    public func log(_ message: String, function: String = #function) {
-        LogService.log(message, function: function)
+    public func log(
+        _ message: String,
+        function: String = #function,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        LogService.log(message, function: function, file: file, line: line)
 
         self.providers.forEach { item in
-            item.log(message: message, function: function)
+            item.log(message: message, function: function, file: file, line: line)
         }
     }
 }
