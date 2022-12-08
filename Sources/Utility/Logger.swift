@@ -6,12 +6,16 @@ public class LogService {
     public static func log(
         _ message: String,
         _ logType: OSLogType = .default,
-        function: String = #function
+        function: String = #function,
+        file: String = #file,
+        line: Int = #line
     ) {
         #if DEBUG
+        let filename = file.components(separatedBy: "/").last ?? ""
+
         self.logger?.log(
             level: logType,
-            "\(function, privacy: .public) \(message, privacy: .public)"
+            "\(filename, privacy: .public) \(function, privacy: .public) L:\(String(line), privacy: .public) \(message, privacy: .public)"
         )
         #endif
     }
