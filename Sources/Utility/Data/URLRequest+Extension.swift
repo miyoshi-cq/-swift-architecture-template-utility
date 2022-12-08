@@ -25,6 +25,6 @@ public extension URLRequest {
             command.append("-d '\(body)'")
         }
 
-        return command.joined(separator: " \\\n\t")
+        return command.joined(separator: " ")
     }
 }
