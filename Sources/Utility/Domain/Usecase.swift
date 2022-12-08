@@ -82,8 +82,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
     ) -> AnyPublisher<T, E> {
         Deferred {
             Future { [weak self] promise in
-                self?.analytics.log(message: String(describing: self))
-                LogService.log("\(Self.self.Repository)")
+                self?.analytics.log(String(describing: Self.self.Repository))
 
                 closure(promise)
             }
@@ -92,7 +91,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
 
     public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
         self.analytics
-            .log(message: "\(String(describing: self)): Fail: \(error.localizedDescription)")
+            .log("\(String(describing: self)): Fail: \(error.localizedDescription)")
 
         switch error {
         case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
@@ -132,9 +131,7 @@ public extension UsecaseImpl where R: Repo,
         Deferred {
             Future { [weak self] promise in
 
-                self?.analytics.log(message: String(describing: self))
-
-                LogService.log("\(Self.self.Repository)")
+                self?.analytics.log(String(describing: Self.self.Repository))
 
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
@@ -146,7 +143,7 @@ public extension UsecaseImpl where R: Repo,
 
                     switch result {
                     case let .success(response):
-                        self.analytics.log(message: "\(String(describing: self)): Success")
+                        self.analytics.log("\(String(describing: Self.self.Repository)): Success")
 
                         let entities = self.mapper.convert(response: response)
 
@@ -183,9 +180,7 @@ public extension UsecaseImpl where R: Repo,
         Deferred {
             Future { [weak self] promise in
 
-                self?.analytics.log(message: String(describing: self))
-
-                LogService.log("\(Self.self.Repository)")
+                self?.analytics.log(String(describing: Self.self.Repository))
 
                 var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
                     -> Void
@@ -197,7 +192,7 @@ public extension UsecaseImpl where R: Repo,
 
                     switch result {
                     case let .success(response):
-                        self.analytics.log(message: "\(String(describing: self)): Success")
+                        self.analytics.log("\(String(describing: Self.self.Repository)): Success")
 
                         let entity = self.mapper.convert(response: response)
                         self.outputStorage = [entity]
@@ -221,9 +216,7 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
         Deferred {
             Future { [weak self] promise in
 
-                self?.analytics.log(message: String(describing: self))
-
-                LogService.log("\(Self.self.Repository)")
+                self?.analytics.log(String(describing: Self.self.Repository))
 
                 var completion: (Result<EmptyResponse, APIError>, HTTPURLResponse?)
                     -> Void
@@ -235,7 +228,7 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
 
                     switch result {
                     case .success:
-                        self.analytics.log(message: "\(String(describing: self)): Success")
+                        self.analytics.log("\(String(describing: Self.self.Repository)): Success")
 
                         promise(.success(()))
                     case let .failure(error):
