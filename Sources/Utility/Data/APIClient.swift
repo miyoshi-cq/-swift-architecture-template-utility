@@ -163,6 +163,7 @@ public class APIClient: Client {
             }
         }
 
+        task.taskDescription = String(describing: T.self)
         task.resume()
     }
 
