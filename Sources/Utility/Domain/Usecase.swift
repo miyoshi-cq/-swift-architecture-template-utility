@@ -81,7 +81,7 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         closure: @escaping (@escaping Future<T, E>.Promise) -> Void
     ) -> AnyPublisher<T, E> {
         Deferred {
-            Future { [weak self] promise in
+            Future { promise in
                 closure(promise)
             }
         }.eraseToAnyPublisher()

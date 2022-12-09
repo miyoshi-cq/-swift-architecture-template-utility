@@ -104,7 +104,7 @@ public extension Request {
 
     var errorMessage: ((Int) -> String?)? { nil }
 
-    var timeoutInterval: TimeInterval { 20 }
+    var timeoutInterval: TimeInterval { 3 }
 
     var fakeAuthError: Bool { false }
 

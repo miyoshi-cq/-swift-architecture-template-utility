@@ -49,7 +49,10 @@ public class Repository<T: Request, C: Client>: Repo {
             case let .success(value):
                 item.successHandler(value)
             case let .failure(error):
-                AnalyticsService.shared.log(error.localizedDescription, .error)
+                AnalyticsService.shared.log(
+                    error.localizedDescription + " " + String(describing: T.self),
+                    .error
+                )
                 item.failureHandler(error)
             }
 
