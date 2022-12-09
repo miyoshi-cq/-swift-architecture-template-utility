@@ -1,7 +1,7 @@
 import Foundation
 
-public struct APIClient: Client {
-    public init() {}
+public class APIClient: Client {
+    public required init() {}
 
     public func request<T: Request>(
         item: T,
@@ -89,7 +89,12 @@ public struct APIClient: Client {
             return
         }
 
-        let task = urlSession.dataTask(with: urlRequest) { data, response, error in
+        let task = urlSession.dataTask(with: urlRequest) { [weak self] data, response, error in
+
+            guard let self else {
+                completion(.failure(.unknown), nil)
+                return
+            }
 
             if let error {
                 AnalyticsService.shared.log(error.localizedDescription, .error)
@@ -137,7 +142,7 @@ public struct APIClient: Client {
                     return
                 }
 
-                decode(
+                self.decode(
                     data: data,
                     responseInfo: response as? HTTPURLResponse,
                     completion: completion

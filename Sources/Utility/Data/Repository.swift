@@ -27,10 +27,10 @@ public protocol Repo: Initializable {
     ) -> T.Response?
 }
 
-public struct Repository<T: Request, C: Client>: Repo {
+public class Repository<T: Request, C: Client>: Repo {
     private let client = C()
 
-    public init() {}
+    public required init() {}
 
     public func request(
         useTestData: Bool = false,
