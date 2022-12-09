@@ -49,6 +49,8 @@ public class APIClient: Client {
         #else
         let urlSession = URLSession.shared
         #endif
+        
+        urlSession.sessionDescription = String(describing: T.self)
 
         guard var urlRequest = createURLRequest(item) else {
             completion(.failure(.invalidRequest), nil)
