@@ -6,8 +6,8 @@ public class APIClient: Client {
     public func request<T: Request>(
         item: T,
         useTestData: Bool = false
-    ) async throws -> (Result<T.Response, APIError>, HTTPURLResponse?) {
-        return try await withCheckedThrowingContinuation { continuation in
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        return await withCheckedContinuation { continuation in
             self.request(item: item, useTestData: useTestData) { result, response in
                 continuation.resume(returning: (result, response))
             }

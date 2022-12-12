@@ -16,6 +16,12 @@ public protocol Repo: Initializable {
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     )
 
+    func request(
+        useTestData: Bool,
+        parameters: T.Parameters,
+        pathComponent: T.PathComponent
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?)
+
     /// For LocalRequest
     /// - Parameters:
     ///   - parameters: parameter
@@ -60,6 +66,33 @@ public class Repository<T: Request, C: Client>: Repo {
         }
     }
 
+    public func request(
+        useTestData: Bool,
+        parameters: T.Parameters,
+        pathComponent: T.PathComponent
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        let item = T(
+            parameters: parameters,
+            pathComponent: pathComponent
+        )
+
+        let result = await self.client.request(item: item, useTestData: useTestData)
+
+        switch result.0 {
+        case let .success(value):
+            item.successHandler(value)
+
+        case let .failure(error):
+            AnalyticsService.shared.log(
+                error.localizedDescription + " " + String(describing: T.self),
+                .error
+            )
+            item.failureHandler(error)
+        }
+
+        return result
+    }
+
     @discardableResult
     public func request(
         parameters: T.Parameters,
@@ -81,6 +114,17 @@ public extension Repository where T.Parameters == EmptyParameters {
             parameters: .init(),
             pathComponent: pathComponent,
             completion: completion
+        )
+    }
+
+    func request(
+        useTestData: Bool = false,
+        pathComponent: T.PathComponent
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        await self.request(
+            useTestData: useTestData,
+            parameters: .init(),
+            pathComponent: pathComponent
         )
     }
 
@@ -107,6 +151,17 @@ public extension Repository where T.PathComponent == EmptyPathComponent {
         )
     }
 
+    func request(
+        useTestData: Bool = false,
+        parameters: T.Parameters
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        await self.request(
+            useTestData: useTestData,
+            parameters: parameters,
+            pathComponent: .init()
+        )
+    }
+
     @discardableResult
     func request(
         parameters: T.Parameters
@@ -128,6 +183,16 @@ public extension Repository where T.PathComponent == EmptyPathComponent,
             parameters: .init(),
             pathComponent: .init(),
             completion: completion
+        )
+    }
+
+    func request(
+        useTestData: Bool = false
+    ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
+        await self.request(
+            useTestData: useTestData,
+            parameters: .init(),
+            pathComponent: .init()
         )
     }
 
