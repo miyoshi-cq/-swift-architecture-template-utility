@@ -87,6 +87,31 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         }.eraseToAnyPublisher()
     }
 
+    public func handleError<T>(error: APIError) -> Result<T, AppError> {
+        switch error {
+        case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
+            return .failure(.none)
+
+        case .offline, .timeout:
+            return .failure(.normal(title: "", message: error.localizedDescription))
+
+        case let .responseError(statusCode, _):
+
+            switch statusCode {
+            case 401, 403:
+
+                NotificationCenter.default.post(
+                    name: NotificationName.clearUsecase,
+                    object: nil
+                )
+
+                return .failure(.auth(title: "", message: error.localizedDescription))
+            default:
+                return .failure(.normal(title: "", message: error.localizedDescription))
+            }
+        }
+    }
+
     public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
         switch error {
         case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
@@ -163,6 +188,22 @@ public extension UsecaseImpl where R: Repo,
     M.Response == R.T.Response,
     M.EntityModel == E
 {
+    func handleResult(result: (Result<R.T.Response, APIError>, HTTPURLResponse?))
+        -> Result<M.EntityModel, AppError>
+    {
+        self.xCursol = result.1?.allHeaderFields["X-Cursor"] as? String
+
+        switch result.0 {
+        case let .success(response):
+            let entity = self.mapper.convert(response: response)
+            self.outputStorage = [entity]
+            return .success(entity)
+
+        case let .failure(error):
+            return self.handleError(error: error)
+        }
+    }
+
     func toPublisher(
         closure: @escaping (@escaping (Result<R.T.Response, APIError>, HTTPURLResponse?) -> Void)
             -> Void
