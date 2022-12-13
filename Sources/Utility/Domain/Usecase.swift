@@ -144,6 +144,31 @@ public extension UsecaseImpl where R: Repo,
     M.EntityModel: Sequence,
     M.EntityModel.Element == E
 {
+    func handleResult(result: (Result<R.T.Response, APIError>, HTTPURLResponse?))
+        -> Result<M.EntityModel, AppError>
+    {
+        self.xCursol = result.1?.allHeaderFields["X-Cursor"] as? String
+
+        switch result.0 {
+        case let .success(response):
+            let entities = self.mapper.convert(response: response)
+
+            entities.forEach { entity in
+                let index = self.outputStorage
+                    .firstIndex { element in element == entity }
+                if let index {
+                    self.outputStorage.remove(at: index)
+                }
+                self.outputStorage.append(entity)
+            }
+
+            return .success(entities)
+
+        case let .failure(error):
+            return self.handleError(error: error)
+        }
+    }
+
     func toPublisher(
         closure: @escaping (@escaping (Result<R.T.Response, APIError>, HTTPURLResponse?) -> Void)
             -> Void
@@ -235,6 +260,20 @@ public extension UsecaseImpl where R: Repo,
 }
 
 public extension UsecaseImpl where R: Repo, M == EmptyMapper {
+    func handleResult(result: (Result<R.T.Response, APIError>, HTTPURLResponse?))
+        -> Result<Void, AppError>
+    {
+        self.xCursol = result.1?.allHeaderFields["X-Cursor"] as? String
+
+        switch result.0 {
+        case .success:
+            return .success(())
+
+        case let .failure(error):
+            return self.handleError(error: error)
+        }
+    }
+
     func toPublisher(
         closure: @escaping (@escaping (Result<EmptyResponse, APIError>, HTTPURLResponse?) -> Void)
             -> Void
