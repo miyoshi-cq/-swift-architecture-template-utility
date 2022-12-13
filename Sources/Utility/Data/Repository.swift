@@ -90,7 +90,11 @@ public class Repository<T: Request, C: Client>: Repo {
             item.failureHandler(error)
         }
 
-        return result
+        if let localDataInterceptorResult = item.localDataInterceptor(parameters) {
+            return (.success(localDataInterceptorResult), nil)
+        } else {
+            return result
+        }
     }
 
     @discardableResult
