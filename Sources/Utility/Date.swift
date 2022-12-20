@@ -41,3 +41,31 @@ public extension DateFormatter {
         return f
     }
 }
+
+public extension String {
+    var iso8601: Date? {
+        DateFormatter.iso8601.date(from: self)
+    }
+
+    var iso8601WithSeconds: Date? {
+        DateFormatter.iso8601WithSeconds.date(from: self)
+    }
+
+    var iso8601withFractionalSeconds: Date? {
+        DateFormatter.iso8601withFractionalSeconds.date(from: self)
+    }
+}
+
+public extension Date {
+    var iso8601: String {
+        DateFormatter.iso8601.string(from: self)
+    }
+
+    var iso8601WithSeconds: String {
+        DateFormatter.iso8601WithSeconds.string(from: self)
+    }
+
+    var iso8601withFractionalSeconds: String {
+        DateFormatter.iso8601withFractionalSeconds.string(from: self)
+    }
+}
