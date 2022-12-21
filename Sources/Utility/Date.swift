@@ -34,35 +34,16 @@ public enum DateFormat: String {
 
 public enum ISO8601DateFormat {
     case iso8601
-    case iso8601WithSeconds
-    case iso8601withFractionalSeconds
+    case iso8601withMilliseconds
 
     var formatter: ISO8601DateFormatter {
         switch self {
         case .iso8601:
             return ISO8601DateFormatter()
 
-        case .iso8601WithSeconds:
+        case .iso8601withMilliseconds:
             let f = ISO8601DateFormatter()
-            f.formatOptions = [
-                .withFullDate,
-                .withTime,
-                .withTimeZone,
-                .withDashSeparatorInDate,
-                .withColonSeparatorInTime,
-            ]
-            return f
-
-        case .iso8601withFractionalSeconds:
-            let f = ISO8601DateFormatter()
-            f.formatOptions = [
-                .withFullDate,
-                .withTime,
-                .withTimeZone,
-                .withDashSeparatorInDate,
-                .withColonSeparatorInTime,
-                .withFractionalSeconds,
-            ]
+            f.formatOptions.insert(.withFractionalSeconds)
             return f
         }
     }
