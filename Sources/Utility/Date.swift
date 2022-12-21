@@ -17,8 +17,6 @@ public enum DateFormat: String {
     case yyyyMdDate = "yyyy.M.d"
     case yyyyMdHmDate = "yyyy.MM.dd HH:mm"
     case dotDateTime = "yyyy.MM.dd HH:mm:ss"
-    case ISODateTime = "yyyy-MM-dd'T'HH:mm:ssZ"
-    case ISODateTimeMilliSecond = "yyyy-MM-dd'T'HH:mm:ss.SSSZ"
     case japanese = "yyyy年MM月dd日"
 
     var formatter: DateFormatter {
