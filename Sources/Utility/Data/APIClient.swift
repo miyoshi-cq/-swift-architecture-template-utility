@@ -204,7 +204,11 @@ public class APIClient: Client {
 
         requestItem.headers.forEach { urlRequest.addValue($1, forHTTPHeaderField: $0) }
 
-        AnalyticsService.shared.log(urlRequest.curlString)
+        let curl = urlRequest.curlString
+
+        Task.detached {
+            await AnalyticsService.shared.log(curl)
+        }
 
         return urlRequest
     }

@@ -1,7 +1,7 @@
 import Foundation
 import os
 
-public protocol AnalyticsProvider {
+public protocol AnalyticsProvider: Sendable {
     func sendEvent(event: AnalyticsEvent)
     func sendScreen(screen: AnalyticsScreen)
     func sendNonFatalError(error: Error)
@@ -9,11 +9,11 @@ public protocol AnalyticsProvider {
     func log(message: String, function: String, file: String, line: Int)
 }
 
-public protocol AnalyticsScreen {
+public protocol AnalyticsScreen: Sendable {
     var screenName: String { get }
 }
 
-public protocol AnalyticsEvent {
+public protocol AnalyticsEvent: Sendable {
     var paramter1: String { get }
     var paramter2: [(type: String, value: String?)] { get }
     var paramter3: Bool { get }
@@ -23,12 +23,16 @@ public extension AnalyticsEvent {
     var paramter3: Bool { false }
 }
 
-public final class AnalyticsService {
+public final actor AnalyticsService {
     private init() {}
 
-    public static var shared: AnalyticsService = .init()
+    public static let shared: AnalyticsService = .init()
 
-    var providers: [AnalyticsProvider] = []
+    private var providers: [AnalyticsProvider] = []
+
+    public func setProviders(providers: [AnalyticsProvider]) {
+        self.providers = providers
+    }
 
     public func sendEvent(_ event: AnalyticsEvent) {
         self.providers.forEach { item in
