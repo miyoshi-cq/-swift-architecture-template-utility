@@ -6,7 +6,9 @@ public enum UtilityConfig {
         analytics: [AnalyticsProvider],
         subsystem: String
     ) {
-        AnalyticsService.shared.providers = analytics
+        Task.detached {
+            await AnalyticsService.shared.setProviders(providers: analytics)
+        }
         LogService.logger = Logger(subsystem: subsystem, category: "Default")
     }
 }
