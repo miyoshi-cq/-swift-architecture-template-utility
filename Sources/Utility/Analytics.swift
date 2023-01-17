@@ -72,9 +72,27 @@ public final actor AnalyticsService {
         }
     }
 
+    public static func setProviders(providers: [AnalyticsProvider]) {
+        Task.detached {
+            await AnalyticsService.shared.setProviders(providers: providers)
+        }
+    }
+
     public static func sendEvent(_ event: AnalyticsEvent) {
         Task.detached {
             await AnalyticsService.shared.sendEvent(event)
+        }
+    }
+
+    public static func sendScreen(screen: AnalyticsScreen) {
+        Task.detached {
+            await AnalyticsService.shared.sendScreen(screen: screen)
+        }
+    }
+
+    public static func setUserID(userId: String?) {
+        Task.detached {
+            await AnalyticsService.shared.setUserID(userId: userId)
         }
     }
 

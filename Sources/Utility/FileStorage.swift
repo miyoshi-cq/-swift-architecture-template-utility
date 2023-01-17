@@ -164,8 +164,6 @@ private extension LocalStorageManager {
     static func logError(errorDescription: String, functionName: String) {
         let log = String(describing: self) + " " + functionName + " error: " + errorDescription
 
-        Task.detached {
-            await AnalyticsService.shared.log(log)
-        }
+        AnalyticsService.log(log)
     }
 }
