@@ -80,7 +80,13 @@ public final actor AnalyticsService {
         line: Int = #line
     ) {
         Task.detached {
-            await AnalyticsService.shared.log(message)
+            await AnalyticsService.shared.log(
+                message,
+                logType,
+                function: function,
+                file: file,
+                line: line
+            )
         }
     }
 }
