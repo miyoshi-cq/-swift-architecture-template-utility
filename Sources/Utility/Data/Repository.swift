@@ -55,12 +55,10 @@ public class Repository<T: Request, C: Client>: Repo {
             case let .success(value):
                 item.successHandler(value)
             case let .failure(error):
-                Task.detached {
-                    await AnalyticsService.shared.log(
-                        error.localizedDescription + " " + String(describing: T.self),
-                        .error
-                    )
-                }
+                AnalyticsService.log(
+                    error.localizedDescription + " " + String(describing: T.self),
+                    .error
+                )
                 item.failureHandler(error)
             }
 
@@ -85,12 +83,10 @@ public class Repository<T: Request, C: Client>: Repo {
             item.successHandler(value)
 
         case let .failure(error):
-            Task.detached {
-                await AnalyticsService.shared.log(
-                    error.localizedDescription + " " + String(describing: T.self),
-                    .error
-                )
-            }
+            AnalyticsService.log(
+                error.localizedDescription + " " + String(describing: T.self),
+                .error
+            )
             item.failureHandler(error)
         }
 

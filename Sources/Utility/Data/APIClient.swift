@@ -206,9 +206,7 @@ public class APIClient: Client {
 
         let curl = urlRequest.curlString
 
-        Task.detached {
-            await AnalyticsService.shared.log(curl)
-        }
+        AnalyticsService.log(curl)
 
         return urlRequest
     }
