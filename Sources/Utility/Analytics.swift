@@ -72,6 +72,12 @@ public final actor AnalyticsService {
         }
     }
 
+    public static func sendEvent(_ event: AnalyticsEvent) {
+        Task.detached {
+            await AnalyticsService.shared.sendEvent(event)
+        }
+    }
+
     public static func log(
         _ message: String,
         _ logType: OSLogType = .default,
