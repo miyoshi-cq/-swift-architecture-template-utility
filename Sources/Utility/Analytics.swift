@@ -71,4 +71,16 @@ public final actor AnalyticsService {
             item.log(message: message, function: function, file: file, line: line)
         }
     }
+
+    public static func log(
+        _ message: String,
+        _ logType: OSLogType = .default,
+        function: String = #function,
+        file: String = #file,
+        line: Int = #line
+    ) {
+        Task.detached {
+            await AnalyticsService.shared.log(message)
+        }
+    }
 }
