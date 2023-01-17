@@ -26,39 +26,39 @@ public extension AnalyticsEvent {
 public final actor AnalyticsService {
     private init() {}
 
-    public static let shared: AnalyticsService = .init()
+    static let shared: AnalyticsService = .init()
 
     private var providers: [AnalyticsProvider] = []
 
-    public func setProviders(providers: [AnalyticsProvider]) {
+    func setProviders(providers: [AnalyticsProvider]) {
         self.providers = providers
     }
 
-    public func sendEvent(_ event: AnalyticsEvent) {
+    func sendEvent(_ event: AnalyticsEvent) {
         self.providers.forEach { item in
             item.sendEvent(event: event)
         }
     }
 
-    public func sendScreen(screen: AnalyticsScreen) {
+    func sendScreen(screen: AnalyticsScreen) {
         self.providers.forEach { item in
             item.sendScreen(screen: screen)
         }
     }
 
-    public func sendNonFatalError(error: Error) {
+    func sendNonFatalError(error: Error) {
         self.providers.forEach { item in
             item.sendNonFatalError(error: error)
         }
     }
 
-    public func setUserID(userId: String?) {
+    func setUserID(userId: String?) {
         self.providers.forEach { item in
             item.setUserID(userId: userId)
         }
     }
 
-    public func log(
+    func log(
         _ message: String,
         _ logType: OSLogType = .default,
         function: String = #function,
@@ -71,32 +71,40 @@ public final actor AnalyticsService {
             item.log(message: message, function: function, file: file, line: line)
         }
     }
+}
 
-    public static func setProviders(providers: [AnalyticsProvider]) {
+public extension AnalyticsService {
+    static func setProviders(providers: [AnalyticsProvider]) {
         Task.detached {
             await AnalyticsService.shared.setProviders(providers: providers)
         }
     }
 
-    public static func sendEvent(_ event: AnalyticsEvent) {
+    static func sendEvent(_ event: AnalyticsEvent) {
         Task.detached {
             await AnalyticsService.shared.sendEvent(event)
         }
     }
 
-    public static func sendScreen(screen: AnalyticsScreen) {
+    static func sendScreen(screen: AnalyticsScreen) {
         Task.detached {
             await AnalyticsService.shared.sendScreen(screen: screen)
         }
     }
 
-    public static func setUserID(userId: String?) {
+    static func sendNonFatalError(error: Error) {
+        Task.detached {
+            await AnalyticsService.shared.sendNonFatalError(error: error)
+        }
+    }
+
+    static func setUserID(userId: String?) {
         Task.detached {
             await AnalyticsService.shared.setUserID(userId: userId)
         }
     }
 
-    public static func log(
+    static func log(
         _ message: String,
         _ logType: OSLogType = .default,
         function: String = #function,
