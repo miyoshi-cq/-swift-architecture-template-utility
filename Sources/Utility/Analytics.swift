@@ -65,7 +65,9 @@ public final actor AnalyticsService {
         file: String = #file,
         line: Int = #line
     ) {
-        LogService.log(message, logType, function: function, file: file, line: line)
+        if #available(iOS 14, *) {
+            LogService.log(message, logType, function: function, file: file, line: line)
+        }
 
         self.providers.forEach { item in
             item.log(message: message, function: function, file: file, line: line)

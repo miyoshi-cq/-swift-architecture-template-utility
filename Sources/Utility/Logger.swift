@@ -1,5 +1,6 @@
 import os
 
+@available(iOS 14, *)
 public class LogService {
     static var logger: Logger?
 
