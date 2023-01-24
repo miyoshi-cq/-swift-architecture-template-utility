@@ -7,6 +7,8 @@ public enum UtilityConfig {
         subsystem: String
     ) {
         AnalyticsService.setProviders(providers: analytics)
-        LogService.logger = Logger(subsystem: subsystem, category: "Default")
+        if #available(iOS 14.0, *) {
+            LogService.logger = Logger(subsystem: subsystem, category: "Default")
+        }
     }
 }
