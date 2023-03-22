@@ -69,7 +69,9 @@ public actor ActorUsecaseImpl<
             forName: NotificationName.clearUsecase,
             object: nil,
             queue: .current
-        ) { _ in
+        ) { [weak self] _ in
+            guard let self else { return }
+
             self.inputStorage = .init()
             self.outputStorage = []
             self.lastId = nil
