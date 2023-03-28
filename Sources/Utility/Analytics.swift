@@ -13,7 +13,7 @@ public protocol AnalyticsScreen: Sendable {
     var screenName: String { get }
 }
 
-public protocol AnalyticsEvent: Sendable {
+public protocol AnalyticsEvent: Sendable, CustomDebugStringConvertible {
     var paramter1: String { get }
     var paramter2: [(type: String, value: String?)] { get }
     var paramter3: Bool { get }
@@ -21,6 +21,12 @@ public protocol AnalyticsEvent: Sendable {
 
 public extension AnalyticsEvent {
     var paramter3: Bool { false }
+
+    var debugDescription: String {
+        Mirror(reflecting: self).children.map { child in
+            "\(child.label ?? ""): \(child.value)"
+        }.compactMap { $0 }.joined(separator: " ")
+    }
 }
 
 public final actor AnalyticsService {
@@ -30,35 +36,39 @@ public final actor AnalyticsService {
 
     private var providers: [AnalyticsProvider] = []
 
-    func setProviders(providers: [AnalyticsProvider]) {
+    private func setProviders(providers: [AnalyticsProvider]) {
         self.providers = providers
     }
 
-    func sendEvent(_ event: AnalyticsEvent) {
+    private func sendEvent(_ event: AnalyticsEvent) {
+        if #available(iOS 14, *) {
+            LogService.log(event.debugDescription)
+        }
+
         self.providers.forEach { item in
             item.sendEvent(event: event)
         }
     }
 
-    func sendScreen(screen: AnalyticsScreen) {
+    private func sendScreen(screen: AnalyticsScreen) {
         self.providers.forEach { item in
             item.sendScreen(screen: screen)
         }
     }
 
-    func sendNonFatalError(error: Error) {
+    private func sendNonFatalError(error: Error) {
         self.providers.forEach { item in
             item.sendNonFatalError(error: error)
         }
     }
 
-    func setUserID(userId: String?) {
+    private func setUserID(userId: String?) {
         self.providers.forEach { item in
             item.setUserID(userId: userId)
         }
     }
 
-    func log(
+    private func log(
         _ message: String,
         _ logType: OSLogType = .default,
         function: String = #function,
