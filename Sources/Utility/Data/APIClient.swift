@@ -99,7 +99,7 @@ public class APIClient: Client {
             }
 
             if let error {
-                AnalyticsService.shared.log(error.localizedDescription, .error)
+                AnalyticsService.log(error.localizedDescription, .error)
             }
 
             #if DEBUG
