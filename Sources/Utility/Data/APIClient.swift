@@ -7,7 +7,7 @@ public class APIClient: Client {
         item: T,
         useTestData: Bool = false
     ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
-        return await withCheckedContinuation { continuation in
+        await withCheckedContinuation { continuation in
             self.request(item: item, useTestData: useTestData) { result, response in
                 continuation.resume(returning: (result, response))
             }
