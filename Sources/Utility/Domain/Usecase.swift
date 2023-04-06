@@ -1,4 +1,3 @@
-import Combine
 import Foundation
 
 public enum NotificationName {
@@ -7,7 +6,7 @@ public enum NotificationName {
 
 private var instances: [String: AnyObject] = [:]
 
-protocol Usecase {
+protocol Usecase: Actor {
     associatedtype Repository: Initializable
     associatedtype Mapper: Initializable
     associatedtype Input: Initializable
@@ -22,7 +21,12 @@ protocol Usecase {
     var xCursol: String? { get }
 }
 
-public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E: Entity>: Usecase {
+public actor UsecaseImpl<
+    R: Initializable,
+    M: Initializable,
+    I: Initializable,
+    E: Entity
+>: Usecase {
     public var repository: R
     public var mapper: M
     public var analytics: AnalyticsService = .shared
@@ -62,29 +66,21 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
         self.repository = repository
         self.mapper = mapper
         self.analytics = analytics
-        self.useTestData = useTestData
         self.inputStorage = input
+        self.useTestData = useTestData
 
         NotificationCenter.default.addObserver(
             forName: NotificationName.clearUsecase,
             object: nil,
             queue: .current
-        ) { _ in
+        ) { [weak self] _ in
+            guard let self else { return }
+
             self.inputStorage = .init()
             self.outputStorage = []
             self.lastId = nil
             self.xCursol = nil
         }
-    }
-
-    public func toPublisher<T, E: Error>(
-        closure: @escaping (@escaping Future<T, E>.Promise) -> Void
-    ) -> AnyPublisher<T, E> {
-        Deferred {
-            Future { promise in
-                closure(promise)
-            }
-        }.eraseToAnyPublisher()
     }
 
     public func handleError<T>(error: APIError) -> Result<T, AppError> {
@@ -108,31 +104,6 @@ public class UsecaseImpl<R: Initializable, M: Initializable, I: Initializable, E
                 return .failure(.auth(title: "", message: error.localizedDescription))
             default:
                 return .failure(.normal(title: "", message: error.localizedDescription))
-            }
-        }
-    }
-
-    public func handleError<T>(error: APIError, promise: Future<T, AppError>.Promise) {
-        switch error {
-        case .unknown, .missingTestJsonDataPath, .invalidRequest, .decodeError:
-            promise(.failure(.none))
-
-        case .offline, .timeout:
-            promise(.failure(.normal(title: "", message: error.localizedDescription)))
-
-        case let .responseError(statusCode, _):
-
-            switch statusCode {
-            case 401, 403:
-
-                NotificationCenter.default.post(
-                    name: NotificationName.clearUsecase,
-                    object: nil
-                )
-
-                promise(.failure(.auth(title: "", message: error.localizedDescription)))
-            default:
-                promise(.failure(.normal(title: "", message: error.localizedDescription)))
             }
         }
     }
@@ -168,44 +139,6 @@ public extension UsecaseImpl where R: Repo,
             return self.handleError(error: error)
         }
     }
-
-    func toPublisher(
-        closure: @escaping (@escaping (Result<R.T.Response, APIError>, HTTPURLResponse?) -> Void)
-            -> Void
-    ) -> AnyPublisher<M.EntityModel, AppError> {
-        Deferred {
-            Future { [weak self] promise in
-                var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
-                    -> Void
-                { { [weak self] result, info in
-
-                    guard let self else { return }
-
-                    self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
-
-                    switch result {
-                    case let .success(response):
-                        let entities = self.mapper.convert(response: response)
-
-                        entities.forEach { entity in
-                            let index = self.outputStorage
-                                .firstIndex { element in element == entity }
-                            if let index {
-                                self.outputStorage.remove(at: index)
-                            }
-                            self.outputStorage.append(entity)
-                        }
-
-                        promise(.success(entities))
-                    case let .failure(error):
-                        self.handleError(error: error, promise: promise)
-                    }
-                }}
-
-                closure(completion)
-            }
-        }.eraseToAnyPublisher()
-    }
 }
 
 public extension UsecaseImpl where R: Repo,
@@ -228,35 +161,6 @@ public extension UsecaseImpl where R: Repo,
             return self.handleError(error: error)
         }
     }
-
-    func toPublisher(
-        closure: @escaping (@escaping (Result<R.T.Response, APIError>, HTTPURLResponse?) -> Void)
-            -> Void
-    ) -> AnyPublisher<M.EntityModel, AppError> {
-        Deferred {
-            Future { [weak self] promise in
-                var completion: (Result<R.T.Response, APIError>, HTTPURLResponse?)
-                    -> Void
-                { { [weak self] result, info in
-
-                    guard let self else { return }
-
-                    self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
-
-                    switch result {
-                    case let .success(response):
-                        let entity = self.mapper.convert(response: response)
-                        self.outputStorage = [entity]
-                        promise(.success(entity))
-                    case let .failure(error):
-                        self.handleError(error: error, promise: promise)
-                    }
-                }}
-
-                closure(completion)
-            }
-        }.eraseToAnyPublisher()
-    }
 }
 
 public extension UsecaseImpl where R: Repo, M == EmptyMapper {
@@ -272,32 +176,5 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
         case let .failure(error):
             return self.handleError(error: error)
         }
-    }
-
-    func toPublisher(
-        closure: @escaping (@escaping (Result<EmptyResponse, APIError>, HTTPURLResponse?) -> Void)
-            -> Void
-    ) -> AnyPublisher<Void, AppError> {
-        Deferred {
-            Future { [weak self] promise in
-                var completion: (Result<EmptyResponse, APIError>, HTTPURLResponse?)
-                    -> Void
-                { { [weak self] result, info in
-
-                    guard let self else { return }
-
-                    self.xCursol = info?.allHeaderFields["X-Cursor"] as? String
-
-                    switch result {
-                    case .success:
-                        promise(.success(()))
-                    case let .failure(error):
-                        self.handleError(error: error, promise: promise)
-                    }
-                }}
-
-                closure(completion)
-            }
-        }.eraseToAnyPublisher()
     }
 }
