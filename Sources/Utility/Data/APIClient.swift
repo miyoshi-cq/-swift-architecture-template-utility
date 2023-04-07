@@ -14,7 +14,7 @@ public class APIClient: Client {
         }
     }
 
-    public func request<T: Request>(
+    private func request<T: Request>(
         item: T,
         useTestData: Bool = false,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
