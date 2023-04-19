@@ -4,7 +4,18 @@ public enum NotificationName {
     public static let clearUsecase: Notification.Name = .init(rawValue: "usecase.clear")
 }
 
-private var instances: [String: AnyObject] = [:]
+@globalActor
+public actor InstanceHolder {
+    public static let shared = InstanceHolder()
+    private var instances: [String: AnyObject] = [:]
+    func getInstance(type: String) -> AnyObject? {
+        self.instances[type]
+    }
+
+    func setInstance(type: String, object: AnyObject) {
+        self.instances[type] = object
+    }
+}
 
 protocol Usecase: Actor {
     associatedtype Repository: Initializable
@@ -36,13 +47,16 @@ public actor UsecaseImpl<
     public var lastId: String?
     public var xCursol: String?
 
-    public static var shared: some UsecaseImpl {
+    public static func shared() async -> some UsecaseImpl {
         let type = String(describing: R.self)
             + String(describing: M.self)
             + String(describing: I.self)
             + String(describing: E.self)
 
-        if let instance = instances[type] as? UsecaseImpl<R, M, I, E> {
+        if
+            let instance = await InstanceHolder.shared
+                .getInstance(type: type) as? UsecaseImpl<R, M, I, E>
+        {
             return instance
         }
 
@@ -52,7 +66,7 @@ public actor UsecaseImpl<
             input: .init(),
             useTestData: false
         )
-        instances[type] = instance
+        await InstanceHolder.shared.setInstance(type: type, object: instance)
         return instance
     }
 
