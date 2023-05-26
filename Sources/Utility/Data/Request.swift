@@ -46,7 +46,7 @@ public protocol Request {
     var baseURL: String { get }
     var path: String { get }
     var wantCache: Bool { get }
-    var localDataInterceptor: (Parameters) -> Response? { get }
+    var localDataInterceptor: (Parameters) async -> Response? { get }
     var successHandler: (Response) -> Void { get }
     var failureHandler: (Error) -> Void { get }
     var errorMessage: ((_ statusCode: Int) -> String?)? { get }
@@ -94,7 +94,7 @@ public extension Request {
 
     var wantCache: Bool { false }
 
-    var localDataInterceptor: (Parameters) -> Response? { { _ in nil } }
+    var localDataInterceptor: (Parameters) async -> Response? { { _ in nil } }
 
     var successHandler: (Response) -> Void {{ _ in }}
 
