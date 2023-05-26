@@ -40,7 +40,7 @@ public class Repository<T: Request, C: Client>: Repo {
             item.failureHandler(error)
         }
 
-        if let localDataInterceptorResult = item.localDataInterceptor(parameters) {
+        if let localDataInterceptorResult = await item.localDataInterceptor(parameters) {
             return (.success(localDataInterceptorResult), nil)
         } else {
             return result
