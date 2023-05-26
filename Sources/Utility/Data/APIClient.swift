@@ -7,7 +7,41 @@ public class APIClient: Client {
         item: T,
         useTestData: Bool = false
     ) async -> (Result<T.Response, APIError>, HTTPURLResponse?) {
-        await withCheckedContinuation { continuation in
+        #if DEBUG
+        if useTestData {
+            let testDataFetchRequest = TestDataFetchRequest(testDataJsonPath: item.testDataPath)
+            return (
+                testDataFetchRequest.fetchLocalTestData(responseType: T.Response.self),
+                nil
+            )
+        }
+        #endif
+
+        guard item.fakeAuthError == false else {
+            return (
+                .failure(
+                    .responseError(
+                        statusCode: 401,
+                        errorMessage: nil
+                    )
+                ),
+                nil
+            )
+        }
+
+        guard await item.fakeBadRequestError == false else {
+            return await (
+                .failure(
+                    .responseError(
+                        statusCode: 400,
+                        errorMessage: item.errorMessage?(400)
+                    )
+                ),
+                nil
+            )
+        }
+
+        return await withCheckedContinuation { continuation in
             self.request(item: item, useTestData: useTestData) { result, response in
                 continuation.resume(returning: (result, response))
             }
@@ -19,17 +53,6 @@ public class APIClient: Client {
         useTestData: Bool = false,
         completion: @escaping (Result<T.Response, APIError>, HTTPURLResponse?) -> Void
     ) {
-        #if DEBUG
-        if useTestData {
-            let testDataFetchRequest = TestDataFetchRequest(testDataJsonPath: item.testDataPath)
-            completion(
-                testDataFetchRequest.fetchLocalTestData(responseType: T.Response.self),
-                nil
-            )
-            return
-        }
-        #endif
-
         #if DEBUG
         let configuration = URLSessionConfiguration.default
         if let fakeAPIErrorStatusCode = item.fakeAPIErrorStatusCode {
@@ -54,32 +77,6 @@ public class APIClient: Client {
 
         guard var urlRequest = createURLRequest(item) else {
             completion(.failure(.invalidRequest), nil)
-            return
-        }
-
-        guard item.fakeAuthError == false else {
-            completion(
-                .failure(
-                    .responseError(
-                        statusCode: 401,
-                        errorMessage: nil
-                    )
-                ),
-                nil
-            )
-            return
-        }
-
-        guard item.fakeBadRequestError == false else {
-            completion(
-                .failure(
-                    .responseError(
-                        statusCode: 400,
-                        errorMessage: item.errorMessage?(400)
-                    )
-                ),
-                nil
-            )
             return
         }
 
@@ -151,15 +148,17 @@ public class APIClient: Client {
                 )
 
             default:
-                completion(
-                    .failure(
-                        .responseError(
-                            statusCode: statusCode,
-                            errorMessage: item.errorMessage?(statusCode)
-                        )
-                    ),
-                    response as? HTTPURLResponse
-                )
+                Task {
+                    await completion(
+                        .failure(
+                            .responseError(
+                                statusCode: statusCode,
+                                errorMessage: item.errorMessage?(statusCode)
+                            )
+                        ),
+                        response as? HTTPURLResponse
+                    )
+                }
             }
         }
 
