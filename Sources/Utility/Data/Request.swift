@@ -49,11 +49,11 @@ public protocol Request {
     var localDataInterceptor: (Parameters) async -> Response? { get }
     var successHandler: (Response) -> Void { get }
     var failureHandler: (Error) -> Void { get }
-    var errorMessage: ((_ statusCode: Int) -> String?)? { get }
+    var errorMessage: ((_ statusCode: Int) async -> String?)? { get }
     var timeoutInterval: TimeInterval { get }
     var fakeAuthError: Bool { get }
     var fakeTimeoutError: Bool { get }
-    var fakeBadRequestError: Bool { get }
+    var fakeBadRequestError: Bool { get async }
 
     #if DEBUG
     var testDataPath: URL? { get }
@@ -102,7 +102,7 @@ public extension Request {
 
     var fakeAPIErrorStatusCode: Int? { nil }
 
-    var errorMessage: ((Int) -> String?)? { nil }
+    var errorMessage: ((Int) async -> String?)? { nil }
 
     var timeoutInterval: TimeInterval { 10 }
 
