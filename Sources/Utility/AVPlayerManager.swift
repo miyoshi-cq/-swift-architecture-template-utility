@@ -2,13 +2,13 @@ import AVKit
 
 @MainActor
 public final class AVPlayerManager {
-    private static var avPlayer: AVPlayer?
+    private var avPlayer: AVPlayer?
 
-    private static var avPlayerItem: AVPlayerItem?
+    private var avPlayerItem: AVPlayerItem?
 
-    private static var finishedHandler: (() -> Void)?
+    private var finishedHandler: (() -> Void)?
 
-    public static func createAVPlayer(assetName: String, fileName: String) {
+    public init(assetName: String, fileName: String, view: UIView) {
         let asset = NSDataAsset(name: assetName)
         let videoUrl = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(fileName)
@@ -19,6 +19,13 @@ public final class AVPlayerManager {
         self.avPlayerItem = .init(url: videoUrl)
 
         self.avPlayer = .init(playerItem: self.avPlayerItem)
+
+        let layer: AVPlayerLayer = .init()
+        layer.videoGravity = .resizeAspect
+        layer.player = self.avPlayer
+        layer.frame = view.bounds
+        layer.backgroundColor = UIColor.white.cgColor
+        view.layer.addSublayer(layer)
 
         NotificationCenter.default.addObserver(
             self,
@@ -49,17 +56,8 @@ public final class AVPlayerManager {
         )
     }
 
-    public static func addAVPlayer(_ view: UIView) {
-        let layer: AVPlayerLayer = .init()
-        layer.videoGravity = .resizeAspect
-        layer.player = self.avPlayer
-        layer.frame = view.bounds
-        layer.backgroundColor = UIColor.white.cgColor
-        view.layer.addSublayer(layer)
-    }
-
     @discardableResult
-    public static func play() async -> Result<Void, Never> {
+    public func play() async -> Result<Void, Never> {
         await withCheckedContinuation { continuation in
             self.play {
                 continuation.resume(returning: .success(()))
@@ -67,7 +65,7 @@ public final class AVPlayerManager {
         }
     }
 
-    private static func play(finishedHandler: @escaping () -> Void) {
+    private func play(finishedHandler: @escaping () -> Void) {
         guard let avPlayer else {
             finishedHandler()
             return
@@ -83,7 +81,7 @@ public final class AVPlayerManager {
         avPlayer.play()
     }
 
-    @objc private static func end() {
+    @objc private func end() {
         self.finishedHandler?()
         self.finishedHandler = nil
     }
