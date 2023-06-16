@@ -26,7 +26,26 @@ public final class AVPlayerManager {
         self.setup(videoUrl: videoUrl, view: view)
     }
 
-    private func setup(videoUrl: URL, view: UIView) {
+    public func changeFrame(bounds: CGRect) {
+        self.layer.frame = bounds
+    }
+
+    @discardableResult
+    public func play() async -> Result<Void, Never> {
+        await withCheckedContinuation { continuation in
+            self.play {
+                continuation.resume(returning: .success(()))
+            }
+        }
+    }
+
+    public func pause() {
+        self.avPlayer?.pause()
+    }
+}
+
+private extension AVPlayerManager {
+    func setup(videoUrl: URL, view: UIView) {
         self.avPlayerItem = .init(url: videoUrl)
 
         self.avPlayer = .init(playerItem: self.avPlayerItem)
@@ -66,20 +85,7 @@ public final class AVPlayerManager {
         )
     }
 
-    public func changeFrame(bounds: CGRect) {
-        self.layer.frame = bounds
-    }
-
-    @discardableResult
-    public func play() async -> Result<Void, Never> {
-        await withCheckedContinuation { continuation in
-            self.play {
-                continuation.resume(returning: .success(()))
-            }
-        }
-    }
-
-    private func play(finishedHandler: @escaping () -> Void) {
+    func play(finishedHandler: @escaping () -> Void) {
         guard let avPlayer else {
             finishedHandler()
             return
@@ -95,7 +101,7 @@ public final class AVPlayerManager {
         avPlayer.play()
     }
 
-    @objc private func end() {
+    @objc func end() {
         self.finishedHandler?()
         self.finishedHandler = nil
     }
