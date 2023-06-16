@@ -16,6 +16,15 @@ public final class AVPlayerManager {
             try asset?.data.write(to: videoUrl)
         } catch {}
 
+        self.setup(videoUrl: videoUrl, view: view)
+    }
+
+    public init(url: String, view: UIView) {
+        guard let videoUrl = URL(string: url) else { return }
+        self.setup(videoUrl: videoUrl, view: view)
+    }
+
+    private func setup(videoUrl: URL, view: UIView) {
         self.avPlayerItem = .init(url: videoUrl)
 
         self.avPlayer = .init(playerItem: self.avPlayerItem)
@@ -24,7 +33,7 @@ public final class AVPlayerManager {
         layer.videoGravity = .resizeAspect
         layer.player = self.avPlayer
         layer.frame = view.bounds
-        layer.backgroundColor = UIColor.white.cgColor
+        layer.backgroundColor = view.backgroundColor?.cgColor
         view.layer.addSublayer(layer)
 
         NotificationCenter.default.addObserver(
