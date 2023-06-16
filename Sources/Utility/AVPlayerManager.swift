@@ -8,6 +8,8 @@ public final class AVPlayerManager {
 
     private var finishedHandler: (() -> Void)?
 
+    private let layer: AVPlayerLayer = .init()
+
     public init(assetName: String, fileName: String, view: UIView) {
         let asset = NSDataAsset(name: assetName)
         let videoUrl = URL(fileURLWithPath: NSTemporaryDirectory())
@@ -29,12 +31,11 @@ public final class AVPlayerManager {
 
         self.avPlayer = .init(playerItem: self.avPlayerItem)
 
-        let layer: AVPlayerLayer = .init()
-        layer.videoGravity = .resizeAspect
-        layer.player = self.avPlayer
-        layer.frame = view.bounds
-        layer.backgroundColor = view.backgroundColor?.cgColor
-        view.layer.addSublayer(layer)
+        self.layer.videoGravity = .resizeAspect
+        self.layer.player = self.avPlayer
+        self.layer.frame = view.bounds
+        self.layer.backgroundColor = view.backgroundColor?.cgColor
+        view.layer.addSublayer(self.layer)
 
         NotificationCenter.default.addObserver(
             self,
@@ -63,6 +64,10 @@ public final class AVPlayerManager {
             name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance()
         )
+    }
+
+    public func changeFrame(bounds: CGRect) {
+        self.layer.frame = bounds
     }
 
     @discardableResult
