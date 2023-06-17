@@ -31,12 +31,17 @@ public final class AVPlayerManager {
     }
 
     @discardableResult
-    public func play() async -> Result<Void, Never> {
+    public func play(fromInitial: Bool = true) async -> Result<Void, Never> {
         await withCheckedContinuation { continuation in
-            self.play {
+            self.play(fromInitial: fromInitial) {
                 continuation.resume(returning: .success(()))
             }
         }
+    }
+
+    public var isPlaying: Bool {
+        guard let avPlayer else { return false }
+        return avPlayer.rate != 0 && avPlayer.error == nil
     }
 
     public func pause() {
@@ -85,7 +90,7 @@ private extension AVPlayerManager {
         )
     }
 
-    func play(finishedHandler: @escaping () -> Void) {
+    func play(fromInitial: Bool = true, finishedHandler: @escaping () -> Void) {
         guard let avPlayer else {
             finishedHandler()
             return
@@ -97,7 +102,9 @@ private extension AVPlayerManager {
         try? audioSession.setCategory(AVAudioSession.Category.ambient)
         try? audioSession.setActive(true)
 
-        avPlayer.seek(to: CMTime.zero)
+        if fromInitial {
+            avPlayer.seek(to: CMTime.zero)
+        }
         avPlayer.play()
     }
 
