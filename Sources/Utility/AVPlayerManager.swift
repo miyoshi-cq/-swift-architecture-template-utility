@@ -1,7 +1,13 @@
 import AVKit
+import Combine
 
 @MainActor
 public final class AVPlayerManager {
+    public typealias ProgressSubject = PassthroughSubject<
+        (fromPlayer: Bool, current: TimeInterval, duration: TimeInterval),
+        Never
+    >
+
     public typealias ProgressHandler = (_ current: TimeInterval, _ duration: TimeInterval) -> Void
 
     private var avPlayer: AVPlayer?
@@ -14,15 +20,15 @@ public final class AVPlayerManager {
 
     private var finishedHandler: (() -> Void)?
 
-    private let progressHandler: ProgressHandler
+    private let progressSubject: ProgressSubject
 
     public init(
         assetName: String,
         fileName: String,
         view: UIView,
-        progressHandler: @escaping ProgressHandler = { _, _ in }
+        progressSubject: ProgressSubject = .init()
     ) {
-        self.progressHandler = progressHandler
+        self.progressSubject = progressSubject
         let asset = NSDataAsset(name: assetName)
         let videoUrl = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(fileName)
@@ -36,9 +42,9 @@ public final class AVPlayerManager {
     public init(
         url: String,
         view: UIView,
-        progressHandler: @escaping ProgressHandler = { _, _ in }
+        progressSubject: ProgressSubject = .init()
     ) {
-        self.progressHandler = progressHandler
+        self.progressSubject = progressSubject
         guard let videoUrl = URL(string: url) else { return }
         self.setup(videoUrl: videoUrl, view: view)
     }
@@ -123,7 +129,8 @@ private extension AVPlayerManager {
 
     @objc func didUpdatePlaybackStatus() {
         guard let avPlayer, let currentItem = avPlayer.currentItem else { return }
-        self.progressHandler(avPlayer.currentTime().seconds, currentItem.duration.seconds)
+        self.progressSubject
+            .send((true, avPlayer.currentTime().seconds, currentItem.duration.seconds))
     }
 
     func play(fromInitial: Bool = true, finishedHandler: @escaping () -> Void) {
