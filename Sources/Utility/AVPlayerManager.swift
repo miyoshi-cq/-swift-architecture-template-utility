@@ -3,12 +3,16 @@ import Combine
 
 @MainActor
 public final class AVPlayerManager {
+    public enum Status {
+        case playing
+        case startDragging
+        case endDragging
+    }
+
     public typealias ProgressSubject = PassthroughSubject<
-        (fromPlayer: Bool, current: TimeInterval, duration: TimeInterval),
+        (status: Status, seekRate: TimeInterval),
         Never
     >
-
-    public typealias ProgressHandler = (_ current: TimeInterval, _ duration: TimeInterval) -> Void
 
     private var avPlayer: AVPlayer?
 
@@ -68,6 +72,34 @@ public final class AVPlayerManager {
         self.avPlayer?.pause()
         self.invalidateDisplayLink()
     }
+
+    public var duration: TimeInterval? {
+        self.avPlayer?.currentItem?.duration.seconds
+    }
+
+    public func startDragging() {
+        self.displayLink?.isPaused = true
+        self.pause()
+    }
+
+    public func endDragging(seekBarValue: TimeInterval) {
+        self.displayLink?.isPaused = false
+
+        guard let avPlayer, let duration else { return }
+
+        avPlayer.seek(
+            to: CMTimeMakeWithSeconds(
+                duration * seekBarValue,
+                preferredTimescale: Int32(NSEC_PER_SEC)
+            ),
+            toleranceBefore: CMTime.zero,
+            toleranceAfter: CMTime.zero
+        )
+
+        Task {
+            await self.play(fromInitial: false)
+        }
+    }
 }
 
 private extension AVPlayerManager {
@@ -116,7 +148,7 @@ private extension AVPlayerManager {
             target: self,
             selector: #selector(self.didUpdatePlaybackStatus)
         )
-        self.displayLink!.add(
+        self.displayLink?.add(
             to: .main,
             forMode: .common
         )
@@ -128,9 +160,8 @@ private extension AVPlayerManager {
     }
 
     @objc func didUpdatePlaybackStatus() {
-        guard let avPlayer, let currentItem = avPlayer.currentItem else { return }
-        self.progressSubject
-            .send((true, avPlayer.currentTime().seconds, currentItem.duration.seconds))
+        guard let avPlayer, let duration else { return }
+        self.progressSubject.send((.playing, avPlayer.currentTime().seconds / duration))
     }
 
     func play(fromInitial: Bool = true, finishedHandler: @escaping () -> Void) {
