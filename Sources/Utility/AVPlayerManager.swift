@@ -2,15 +2,27 @@ import AVKit
 
 @MainActor
 public final class AVPlayerManager {
+    public typealias ProgressHandler = (_ current: TimeInterval, _ duration: TimeInterval) -> Void
+
     private var avPlayer: AVPlayer?
 
     private var avPlayerItem: AVPlayerItem?
 
     private let avPlayerLayer: AVPlayerLayer = .init()
 
+    private var displayLink: CADisplayLink?
+
     private var finishedHandler: (() -> Void)?
 
-    public init(assetName: String, fileName: String, view: UIView) {
+    private let progressHandler: ProgressHandler
+
+    public init(
+        assetName: String,
+        fileName: String,
+        view: UIView,
+        progressHandler: @escaping ProgressHandler = { _, _ in }
+    ) {
+        self.progressHandler = progressHandler
         let asset = NSDataAsset(name: assetName)
         let videoUrl = URL(fileURLWithPath: NSTemporaryDirectory())
             .appendingPathComponent(fileName)
@@ -21,7 +33,12 @@ public final class AVPlayerManager {
         self.setup(videoUrl: videoUrl, view: view)
     }
 
-    public init(url: String, view: UIView) {
+    public init(
+        url: String,
+        view: UIView,
+        progressHandler: @escaping ProgressHandler = { _, _ in }
+    ) {
+        self.progressHandler = progressHandler
         guard let videoUrl = URL(string: url) else { return }
         self.setup(videoUrl: videoUrl, view: view)
     }
@@ -32,20 +49,18 @@ public final class AVPlayerManager {
 
     @discardableResult
     public func play(fromInitial: Bool = true) async -> Result<Void, Never> {
-        await withCheckedContinuation { continuation in
+        validateDisplayLink()
+
+        return await withCheckedContinuation { continuation in
             self.play(fromInitial: fromInitial) {
                 continuation.resume(returning: .success(()))
             }
         }
     }
 
-    public var isPlaying: Bool {
-        guard let avPlayer else { return false }
-        return avPlayer.rate != 0 && avPlayer.error == nil
-    }
-
     public func pause() {
         self.avPlayer?.pause()
+        self.invalidateDisplayLink()
     }
 }
 
@@ -88,6 +103,27 @@ private extension AVPlayerManager {
             name: AVAudioSession.interruptionNotification,
             object: AVAudioSession.sharedInstance()
         )
+    }
+
+    func validateDisplayLink() {
+        self.displayLink = CADisplayLink(
+            target: self,
+            selector: #selector(self.didUpdatePlaybackStatus)
+        )
+        self.displayLink!.add(
+            to: .main,
+            forMode: .common
+        )
+    }
+
+    func invalidateDisplayLink() {
+        self.displayLink?.invalidate()
+        self.displayLink = nil
+    }
+
+    @objc func didUpdatePlaybackStatus() {
+        guard let avPlayer, let currentItem = avPlayer.currentItem else { return }
+        self.progressHandler(avPlayer.currentTime().seconds, currentItem.duration.seconds)
     }
 
     func play(fromInitial: Bool = true, finishedHandler: @escaping () -> Void) {
