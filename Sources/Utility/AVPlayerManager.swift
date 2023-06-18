@@ -6,9 +6,9 @@ public final class AVPlayerManager {
 
     private var avPlayerItem: AVPlayerItem?
 
-    private var finishedHandler: (() -> Void)?
+    private let avPlayerLayer: AVPlayerLayer = .init()
 
-    private let layer: AVPlayerLayer = .init()
+    private var finishedHandler: (() -> Void)?
 
     public init(assetName: String, fileName: String, view: UIView) {
         let asset = NSDataAsset(name: assetName)
@@ -27,7 +27,7 @@ public final class AVPlayerManager {
     }
 
     public func changeFrame(bounds: CGRect) {
-        self.layer.frame = bounds
+        self.avPlayerLayer.frame = bounds
     }
 
     @discardableResult
@@ -55,11 +55,11 @@ private extension AVPlayerManager {
 
         self.avPlayer = .init(playerItem: self.avPlayerItem)
 
-        self.layer.videoGravity = .resizeAspect
-        self.layer.player = self.avPlayer
-        self.layer.frame = view.bounds
-        self.layer.backgroundColor = view.backgroundColor?.cgColor
-        view.layer.addSublayer(self.layer)
+        self.avPlayerLayer.videoGravity = .resizeAspect
+        self.avPlayerLayer.player = self.avPlayer
+        self.avPlayerLayer.frame = view.bounds
+        self.avPlayerLayer.backgroundColor = view.backgroundColor?.cgColor
+        view.layer.addSublayer(self.avPlayerLayer)
 
         NotificationCenter.default.addObserver(
             self,
