@@ -8,7 +8,7 @@ public class AuthenticationServicesManager: NSObject,
     private let successHandler: (String) -> Void
     private let failureHandler: () -> Void
 
-    private var view: UIView!
+    private weak var window: UIWindow?
 
     private var authenticationSession: ASWebAuthenticationSession?
 
@@ -29,8 +29,8 @@ public class AuthenticationServicesManager: NSObject,
         controller.performRequests()
     }
 
-    public func setup(view: UIView) {
-        self.view = view
+    public func setup(window: UIWindow) {
+        self.window = window
     }
 
     /// Appleログイン成功時
@@ -57,7 +57,7 @@ public class AuthenticationServicesManager: NSObject,
     public func presentationAnchor(for session: ASWebAuthenticationSession)
         -> ASPresentationAnchor
     {
-        self.view.window!
+        self.window!
     }
 
     public func startSession(
