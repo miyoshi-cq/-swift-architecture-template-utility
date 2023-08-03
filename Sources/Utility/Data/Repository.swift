@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 
 public protocol Repo: Initializable {
@@ -90,3 +91,4 @@ public extension Repository where T.PathComponent == EmptyPathComponent,
         )
     }
 }
+#endif
