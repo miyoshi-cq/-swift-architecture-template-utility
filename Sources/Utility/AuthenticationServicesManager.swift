@@ -1,3 +1,4 @@
+#if !os(macOS)
 import AuthenticationServices
 
 @MainActor
@@ -74,3 +75,4 @@ public class AuthenticationServicesManager: NSObject,
         self.authenticationSession?.start()
     }
 }
+#endif

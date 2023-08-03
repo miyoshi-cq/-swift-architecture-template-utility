@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 
 public class APIClient: Client {
@@ -210,3 +211,4 @@ public class APIClient: Client {
         return urlRequest
     }
 }
+#endif

@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 
 @propertyWrapper
@@ -167,3 +168,4 @@ private extension LocalStorageManager {
         AnalyticsService.log(log)
     }
 }
+#endif

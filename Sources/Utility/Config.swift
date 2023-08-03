@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 import os
 
@@ -12,3 +13,4 @@ public enum UtilityConfig {
         }
     }
 }
+#endif

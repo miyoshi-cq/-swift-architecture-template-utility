@@ -1,3 +1,4 @@
+#if !os(macOS)
 import AVFoundation
 import Foundation
 
@@ -29,3 +30,4 @@ public class CameraUtility {
         }
     }
 }
+#endif

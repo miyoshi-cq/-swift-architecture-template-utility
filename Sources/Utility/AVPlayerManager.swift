@@ -1,3 +1,4 @@
+#if !os(macOS)
 import AVKit
 import Combine
 
@@ -187,3 +188,4 @@ private extension AVPlayerManager {
         self.finishedHandler = nil
     }
 }
+#endif

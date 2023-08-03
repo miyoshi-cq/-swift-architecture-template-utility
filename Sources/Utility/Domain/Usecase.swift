@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 
 public enum NotificationName {
@@ -192,3 +193,4 @@ public extension UsecaseImpl where R: Repo, M == EmptyMapper {
         }
     }
 }
+#endif

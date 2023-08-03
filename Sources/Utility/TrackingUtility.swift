@@ -1,3 +1,4 @@
+#if !os(macOS)
 import AppTrackingTransparency
 
 public final class TrackingUtility {
@@ -22,3 +23,4 @@ public final class TrackingUtility {
         }
     }
 }
+#endif

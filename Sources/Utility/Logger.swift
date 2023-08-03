@@ -1,3 +1,4 @@
+#if !os(macOS)
 import os
 
 @available(iOS 14, *)
@@ -21,3 +22,4 @@ public class LogService {
         #endif
     }
 }
+#endif

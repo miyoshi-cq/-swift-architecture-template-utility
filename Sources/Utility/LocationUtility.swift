@@ -1,3 +1,4 @@
+#if !os(macOS)
 import CoreLocation
 import Foundation
 
@@ -63,3 +64,4 @@ extension LocationUtility: CLLocationManagerDelegate {
         }
     }
 }
+#endif

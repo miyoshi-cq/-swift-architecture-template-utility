@@ -1,3 +1,4 @@
+#if !os(macOS)
 import Foundation
 import os
 
@@ -134,3 +135,4 @@ public extension AnalyticsService {
         }
     }
 }
+#endif
