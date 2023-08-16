@@ -3,4 +3,4 @@
 A description of this package.
 
 ## Docs
-- `swift package --disable-sandbox preview-documentation --target Utility`
+- `swift package --allow-writing-to-directory ./docs generate-documentation --target Navigation --disable-indexing --output-path ./docs --transform-for-static-hosting --hosting-base-path swift-architecture-template-navigation`
