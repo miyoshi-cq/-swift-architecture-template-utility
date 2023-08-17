@@ -1,9 +1,18 @@
 import Foundation
 
+/// Data access object of keychain
+///
+/// ## Usage
+/// ```swift
+/// @KeychainStorage(key: "access_token_key")
+/// static var accessToken: String?
+/// ```
 @propertyWrapper
 public class KeychainStorage<T: LosslessStringConvertible> {
     private let key: String
 
+    /// Initializes with the given key.
+    /// - Parameter key: key of keychain value
     public init(key: String) {
         self.key = key
     }
