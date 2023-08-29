@@ -33,30 +33,50 @@ enum HTTPStatusCode {
     static let unprocessableEntity = 422
 }
 
+/// Request for API Client
 public protocol Request {
+    /// API response type
     associatedtype Response: Decodable
     associatedtype Parameters: Encodable
     associatedtype PathComponent
 
+    /// http request header infomation
     var headers: [String: String] { get }
+    /// http method
     var method: HTTPMethod { get }
+    /// nessesary for creating request url
     var parameters: Parameters { get }
+    /// http query
     var queryItems: [URLQueryItem]? { get }
+    /// http body
     var body: Data? { get }
+    /// base url
     var baseURL: String { get }
+    /// request url path
     var path: String { get }
+    /// use cache or not
     var wantCache: Bool { get }
+    /// middleware
     var localDataInterceptor: (Parameters) async -> Response? { get }
+    /// called when request succeed
     var successHandler: (Response) -> Void { get }
+    /// called when request fail
     var failureHandler: (Error) -> Void { get }
+    /// error message for each status code
     var errorMessage: ((_ statusCode: Int) async -> String?)? { get }
+    /// timeout interval
     var timeoutInterval: TimeInterval { get }
+    /// fake auth error or not
     var fakeAuthError: Bool { get }
+    /// fake timeout error or not
     var fakeTimeoutError: Bool { get }
+    /// fake bad request  error or not
     var fakeBadRequestError: Bool { get async }
 
     #if DEBUG
+    /// local test data url
     var testDataPath: URL? { get }
+    /// fake status code
     var fakeAPIErrorStatusCode: Int? { get }
     #endif
 
