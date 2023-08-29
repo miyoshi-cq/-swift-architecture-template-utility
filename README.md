@@ -2,9 +2,57 @@
 
 Utility package.
 
-## Installation
+## Intoroduction
 
 [Swift Package Manager](https://www.swift.org/package-manager/) is supported.
+
+### Into Project
+
+add package into `Package Dependencies`
+
+### Into Package
+
+```swift
+let package = Package(
+    name: "Sample",
+    platforms: [
+        .iOS(.v14),
+    ],
+    products: [
+        .library(
+            name: "Sample",
+            targets: ["Sample"]
+        ),
+    ],
+    dependencies: [
+        .package(
+            url: "https://github.com/miyoshi-cq/swift-architecture-template-utility",
+            .upToNextMajor(from: "1.0.0")
+        ),
+    ],
+    targets: [
+        .target(
+            name: "Sample",
+            dependencies: [
+                .product(name: "Utility", package: "swift-architecture-template-utility"),
+            ]
+        ),
+        .testTarget(
+            name: "SampleTests",
+            dependencies: ["Sample"]
+        ),
+    ]
+)
+```
+
+### Usage
+
+`import Utility`
+
+## Requirements
+
+- Xcode 14.3.1 or later
+- iOS 13 or later
 
 ## Documentation
 
@@ -13,3 +61,11 @@ Utility package.
 
 ## Generate Docs
 - `make` or `make create_doc`
+
+## Code Format
+
+`swiftformat .`
+
+## Versioning
+
+[Semantic Versioning](https://semver.org/)
