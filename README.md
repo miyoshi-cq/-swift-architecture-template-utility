@@ -26,7 +26,7 @@ let package = Package(
     ],
     dependencies: [
         .package(
-            url: "https://github.com/miyoshi-cq/swift-architecture-template-utility",
+            url: "https://github.com/miyoshitakaaki/swift-architecture-template-utility",
             .upToNextMajor(from: "1.0.0")
         ),
     ],
@@ -56,8 +56,8 @@ let package = Package(
 
 ## Documentation
 
-- [Use APIClient](https://miyoshi-cq.github.io/swift-architecture-template-utility/documentation/utility/usageofapiclient/)
-- [Use Usecase](https://miyoshi-cq.github.io/swift-architecture-template-utility/documentation/utility/useusecase/)
+- [Use APIClient](https://miyoshitakaaki.github.io/swift-architecture-template-utility/documentation/utility/usageofapiclient/)
+- [Use Usecase](https://miyoshitakaaki.github.io/swift-architecture-template-utility/documentation/utility/useusecase/)
 
 ## Generate Docs
 - `make` or `make create_doc`
