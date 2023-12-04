@@ -51,7 +51,7 @@ let package = Package(
 
 ## Requirements
 
-- Xcode 14.3.1 or later
+- Xcode 15.x or later
 - iOS 13 or later
 
 ## Documentation
